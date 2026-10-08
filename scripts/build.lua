@@ -115,11 +115,18 @@ local function build_theme(palette)
     style:set(key, colour_for(key, spec))
   end
 
+  -- A Syntax Key entry is { key, colour-spec, font_style = ..., font_weight = ... };
+  -- the font fields are optional and are the only ones Zed reads besides color.
   local syntax = json.object()
   for _, entry in ipairs(mapping.syntax) do
     local key, spec = entry[1], entry[2]
     local syntax_style = json.object()
     syntax_style:set("color", colour_for("syntax." .. key, spec))
+    for _, field in ipairs({ "font_style", "font_weight" }) do
+      if entry[field] ~= nil then
+        syntax_style:set(field, entry[field])
+      end
+    end
     syntax:set(key, syntax_style)
   end
   style:set("syntax", syntax)
