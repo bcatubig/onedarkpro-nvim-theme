@@ -1,0 +1,30 @@
+{
+  "$schema": "https://zed.dev/schema/themes/v0.2.0.json",
+  "name": "OneDarkPro",
+  "author": "Brandon Catubig",
+  "themes": [
+    {
+      "name": "OneDarkPro Onedark",
+      "appearance": "dark",
+      "style": {
+        "background": "#282c34",
+        "editor.background": "#282c34",
+        "editor.foreground": "#abb2bf",
+        "syntax": {
+          "keyword": {
+            "color": "#c678dd"
+          },
+          "string": {
+            "color": "#98c379"
+          },
+          "comment": {
+            "color": "#7f848e"
+          },
+          "variable": {
+            "color": "#e06c75"
+          }
+        }
+      }
+    }
+  ]
+}
