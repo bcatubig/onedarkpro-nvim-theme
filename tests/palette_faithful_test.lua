@@ -24,8 +24,7 @@ test("every colour in OneDarkPro Onedark, alpha stripped, is in the onedark Pale
 end)
 
 test("build fails, naming the key and the colour, when the Mapping introduces a colour outside the Palette", function()
-  local dir = vim.fn.tempname()
-  vim.fn.mkdir(dir, "p")
+  local dir = h.tempdir()
   local mapping = dir .. "/mapping.lua"
   local f = assert(io.open(mapping, "w"))
   f:write([[

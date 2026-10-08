@@ -8,10 +8,7 @@
 --
 --   nvim --clean -l scripts/extract.lua [variant ...]     (default: onedark)
 
-local root = (function()
-  local script = vim.fn.fnamemodify(debug.getinfo(1, "S").source:sub(2), ":p")
-  return vim.fs.dirname(vim.fs.dirname(script))
-end)()
+local root = vim.fs.dirname(vim.fs.dirname(vim.fn.fnamemodify(debug.getinfo(1, "S").source:sub(2), ":p")))
 package.path = root .. "/scripts/?.lua;" .. package.path
 
 local json = require("lib.json")
@@ -19,7 +16,9 @@ local util = require("lib.util")
 
 vim.opt.rtp:prepend(root .. "/upstream")
 
--- The user's nvim runs Upstream with cursorline on, so extract with it on too.
+-- Extract with cursorline on, as the user's nvim runs Upstream. At this
+-- Upstream commit the option changes no Palette colour; it is set so that
+-- extraction keeps tracking the user's configuration if that ever changes.
 require("onedarkpro.config").setup({ options = { cursorline = true } })
 
 -- Upstream's fourteen base colours, in the order its palette files list them.
@@ -58,20 +57,20 @@ local function ordered_colours(colours, first)
 end
 
 local function extract(variant)
-  local theme = require("onedarkpro.theme").load(variant)
-  if type(theme) ~= "table" then
+  local upstream_theme = require("onedarkpro.theme").load(variant)
+  if type(upstream_theme) ~= "table" then
     util.fail("Upstream could not load the Variant " .. variant)
   end
   local palette = json.object()
   palette:set("variant", variant)
-  palette:set("appearance", theme.meta.background)
+  palette:set("appearance", upstream_theme.meta.background)
   palette:set("upstream", util.upstream_commit(root))
-  palette:set("base", ordered_colours(theme.palette, BASE_ORDER))
-  palette:set("derived", ordered_colours(theme.generated))
+  palette:set("base", ordered_colours(upstream_theme.palette, BASE_ORDER))
+  palette:set("derived", ordered_colours(upstream_theme.generated))
 
   local path = root .. "/palettes/" .. variant .. ".json"
   util.write(path, json.encode(palette))
-  print("extracted " .. variant .. " -> " .. vim.fs.relpath(root, path))
+  print("extracted " .. variant .. " -> " .. (vim.fs.relpath(root, path) or path))
 end
 
 local variants = #arg > 0 and arg or { "onedark" }

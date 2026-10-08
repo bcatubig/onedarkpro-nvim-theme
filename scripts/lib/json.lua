@@ -7,7 +7,7 @@ local Object = {}
 Object.__index = Object
 
 function M.object()
-  return setmetatable({ keys = {}, values = {} }, Object)
+  return setmetatable({ keys = {}, present = {}, values = {} }, Object)
 end
 
 function M.is_object(value)
@@ -15,15 +15,12 @@ function M.is_object(value)
 end
 
 function Object:set(key, value)
-  if self.values[key] == nil then
+  if not self.present[key] then
     self.keys[#self.keys + 1] = key
+    self.present[key] = true
   end
   self.values[key] = value
   return self
-end
-
-function Object:get(key)
-  return self.values[key]
 end
 
 local escapes = { ['"'] = '\\"', ["\\"] = "\\\\", ["\n"] = "\\n", ["\r"] = "\\r", ["\t"] = "\\t" }

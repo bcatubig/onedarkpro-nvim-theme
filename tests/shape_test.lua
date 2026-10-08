@@ -26,8 +26,7 @@ test("every colour in the Theme Family is well-formed hex, #rrggbb or #rrggbbaa"
 end)
 
 test("building twice produces a byte-identical Theme Family", function()
-  local dir = vim.fn.tempname()
-  vim.fn.mkdir(dir, "p")
+  local dir = h.tempdir()
   local first = h.run_build({ "--out", dir .. "/first.json" })
   local second = h.run_build({ "--out", dir .. "/second.json" })
   h.eq(first.code, 0, "first build exit code")
@@ -36,8 +35,7 @@ test("building twice produces a byte-identical Theme Family", function()
 end)
 
 test("the committed Theme Family is what the build produces", function()
-  local dir = vim.fn.tempname()
-  vim.fn.mkdir(dir, "p")
+  local dir = h.tempdir()
   local result = h.run_build({ "--out", dir .. "/fresh.json" })
   h.eq(result.code, 0, "build exit code")
   assert(h.read(dir .. "/fresh.json") == h.read(h.root .. "/themes/onedarkpro.json"),

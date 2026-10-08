@@ -7,10 +7,14 @@ local M = {}
 
 M.read = util.read
 
-M.root = (function()
-  local script = vim.fn.fnamemodify(debug.getinfo(1, "S").source:sub(2), ":p")
-  return vim.fs.dirname(vim.fs.dirname(script))
-end)()
+M.root = util.root_of(debug.getinfo(1, "S").source)
+
+-- A fresh empty directory for a test's scratch files.
+function M.tempdir()
+  local dir = vim.fn.tempname()
+  vim.fn.mkdir(dir, "p")
+  return dir
+end
 
 -- The built Theme Family.
 function M.theme_family(path)
@@ -43,9 +47,10 @@ function M.each_colour(value, fn, path)
   end
 end
 
--- Run the build command with extra arguments; returns { code, stdout, stderr }.
+-- Run the build command, under the same nvim that runs the tests, with extra
+-- arguments; returns { code, stdout, stderr }.
 function M.run_build(args)
-  local cmd = { "nvim", "--clean", "-l", M.root .. "/scripts/build.lua" }
+  local cmd = { vim.v.progpath, "--clean", "-l", M.root .. "/scripts/build.lua" }
   vim.list_extend(cmd, args or {})
   return vim.system(cmd, { text = true }):wait()
 end

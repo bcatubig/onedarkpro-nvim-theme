@@ -5,21 +5,22 @@
 -- Every emitted colour must be Palette-faithful: alpha stripped, it must be a
 -- Palette colour of its Variant, or the build fails naming the key and colour.
 --
---   nvim --clean -l scripts/build.lua [--mapping FILE] [--out FILE] [--palettes DIR]
+--   nvim --clean -l scripts/build.lua [--mapping FILE] [--out FILE]
 
-local root = (function()
-  local script = vim.fn.fnamemodify(debug.getinfo(1, "S").source:sub(2), ":p")
-  return vim.fs.dirname(vim.fs.dirname(script))
-end)()
+local root = vim.fs.dirname(vim.fs.dirname(vim.fn.fnamemodify(debug.getinfo(1, "S").source:sub(2), ":p")))
 package.path = root .. "/scripts/?.lua;" .. package.path
 
 local json = require("lib.json")
 local util = require("lib.util")
 
+local PALETTES = root .. "/palettes"
+local SCHEMA = "https://zed.dev/schema/themes/v0.2.0.json"
+local FAMILY = "OneDarkPro"
+local AUTHOR = "Brandon Catubig"
+
 local opts = {
   mapping = root .. "/scripts/mapping.lua",
   out = root .. "/themes/onedarkpro.json",
-  palettes = root .. "/palettes",
 }
 do
   local i = 1
@@ -29,14 +30,10 @@ do
       opts[flag] = arg[i + 1]
       i = i + 2
     else
-      util.fail("usage: nvim --clean -l scripts/build.lua [--mapping FILE] [--out FILE] [--palettes DIR]")
+      util.fail("usage: nvim --clean -l scripts/build.lua [--mapping FILE] [--out FILE]")
     end
   end
 end
-
-local SCHEMA = "https://zed.dev/schema/themes/v0.2.0.json"
-local FAMILY = "OneDarkPro"
-local AUTHOR = "Brandon Catubig"
 
 local mapping = dofile(opts.mapping)
 
@@ -89,6 +86,9 @@ local function build_theme(palette)
     if type(spec) == "table" then
       colour_name, alpha = spec[1], spec.alpha
     end
+    if type(colour_name) ~= "string" then
+      util.fail(string.format("Mapping: %s %s has no Palette colour", name, key))
+    end
     local colour = colour_name
     if colour_name:sub(1, 1) ~= "#" then
       colour = by_name[colour_name]
@@ -118,15 +118,9 @@ local function build_theme(palette)
   local syntax = json.object()
   for _, entry in ipairs(mapping.syntax) do
     local key, spec = entry[1], entry[2]
-    local token = json.object()
-    token:set("color", colour_for("syntax." .. key, spec))
-    if entry.font_style then
-      token:set("font_style", entry.font_style)
-    end
-    if entry.font_weight then
-      token:set("font_weight", entry.font_weight)
-    end
-    syntax:set(key, token)
+    local syntax_style = json.object()
+    syntax_style:set("color", colour_for("syntax." .. key, spec))
+    syntax:set(key, syntax_style)
   end
   style:set("syntax", syntax)
 
@@ -139,7 +133,7 @@ family:set("$schema", SCHEMA)
 family:set("name", FAMILY)
 family:set("author", AUTHOR)
 local themes = {}
-for _, palette in ipairs(load_palettes(opts.palettes)) do
+for _, palette in ipairs(load_palettes(PALETTES)) do
   themes[#themes + 1] = build_theme(palette)
 end
 family:set("themes", themes)

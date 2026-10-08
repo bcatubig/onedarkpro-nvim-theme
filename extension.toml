@@ -3,6 +3,6 @@ name = "OneDarkPro nvim"
 version = "0.1.0"
 schema_version = 1
 authors = ["Brandon Catubig <bcatubig@pm.me>"]
-description = "The olimorris/onedarkpro.nvim colourschemes for Zed, generated from Upstream's own palette code."
+description = "The olimorris/onedarkpro.nvim colours for Zed, generated from the plugin's own palette code."
 repository = "https://github.com/bcatubig/onedarkpro-nvim-theme"
 themes = ["themes/onedarkpro.json"]

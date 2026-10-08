@@ -6,10 +6,7 @@
 -- and exits non-zero if any fail. Tests observe the project through its one
 -- seam: the built Theme Family JSON (and the build command that produces it).
 
-local root = (function()
-  local script = vim.fn.fnamemodify(debug.getinfo(1, "S").source:sub(2), ":p")
-  return vim.fs.dirname(vim.fs.dirname(script))
-end)()
+local root = vim.fs.dirname(vim.fs.dirname(vim.fn.fnamemodify(debug.getinfo(1, "S").source:sub(2), ":p")))
 package.path = root .. "/scripts/?.lua;" .. root .. "/tests/?.lua;" .. package.path
 
 local cases = {}

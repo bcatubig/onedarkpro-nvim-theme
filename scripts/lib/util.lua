@@ -29,9 +29,11 @@ end
 
 -- The Upstream commit the submodule is checked out at.
 function M.upstream_commit(root)
-  local result = vim.system({ "git", "-C", root .. "/upstream", "rev-parse", "HEAD" }, { text = true }):wait()
-  if result.code ~= 0 then
-    M.fail("cannot read the Upstream submodule commit: " .. (result.stderr or ""))
+  local ok, result = pcall(function()
+    return vim.system({ "git", "-C", root .. "/upstream", "rev-parse", "HEAD" }, { text = true }):wait()
+  end)
+  if not ok or result.code ~= 0 then
+    M.fail("cannot read the Upstream submodule commit: " .. (ok and result.stderr or tostring(result)))
   end
   return vim.trim(result.stdout)
 end
