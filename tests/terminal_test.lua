@@ -7,7 +7,7 @@
 local h = require("helpers")
 
 -- Zed's ANSI Style Keys in the order of ghostty's palette slots 0 to 15.
-local SLOTS = {
+local ANSI_KEYS_BY_SLOT = {
   "black", "red", "green", "yellow", "blue", "magenta", "cyan", "white",
   "bright_black", "bright_red", "bright_green", "bright_yellow",
   "bright_blue", "bright_magenta", "bright_cyan", "bright_white",
@@ -36,7 +36,7 @@ test("the sixteen ANSI colours of OneDarkPro Onedark equal, slot for slot, Upstr
   local style = h.theme_family().themes[1].style
   local export = ghostty_export("onedark")
   for slot = 0, 15 do
-    local key = "terminal.ansi." .. SLOTS[slot + 1]
+    local key = "terminal.ansi." .. ANSI_KEYS_BY_SLOT[slot + 1]
     assert(export.palette[slot], "the ghostty export has no palette line for slot " .. slot)
     h.eq(style[key], export.palette[slot], key .. " <- palette " .. slot)
   end
@@ -53,12 +53,17 @@ test("every dim ANSI colour and the dim foreground are their normal colour at 60
   h.eq(style["terminal.dim_foreground"], style["terminal.foreground"] .. "99", "terminal.dim_foreground")
 end)
 
-test("terminal background, ANSI background and foreground equal the ghostty export's background and foreground; bright foreground is its bright white", function()
+test("terminal background, ANSI background and foreground equal the ghostty export's background and foreground", function()
   local style = h.theme_family().themes[1].style
   local export = ghostty_export("onedark")
   assert(export.background and export.foreground, "the ghostty export has no background or foreground line")
   h.eq(style["terminal.background"], export.background, "terminal.background <- background")
   h.eq(style["terminal.ansi.background"], export.background, "terminal.ansi.background <- background")
   h.eq(style["terminal.foreground"], export.foreground, "terminal.foreground <- foreground")
+end)
+
+test("bright foreground is the ghostty export's bright white, the lightened fg", function()
+  local style = h.theme_family().themes[1].style
+  local export = ghostty_export("onedark")
   h.eq(style["terminal.bright_foreground"], export.palette[15], "terminal.bright_foreground <- palette 15")
 end)

@@ -189,8 +189,8 @@ return {
     -- Terminal, slot for slot as Upstream's ghostty, kitty and wezterm
     -- exports fill it (upstream/lua/onedarkpro/extra/ghostty.lua and its
     -- siblings): black and white are the Palette's `black` and `white`,
-    -- magenta is purple, bright black is gray and the other bright colours
-    -- are the Bright Colours. The export's background and foreground, bg and
+    -- magenta is purple, bright black is gray and slots 9 to 15 take the
+    -- Bright Colours. The export's background and foreground, bg and
     -- fg, fill terminal.background, terminal.ansi.background (Zed's colour
     -- for a cell on the default background) and terminal.foreground above,
     -- by "Editor surface" and "Text".
@@ -210,9 +210,11 @@ return {
     { "ANSI bright magenta", "bright_purple", { "terminal.ansi.bright_magenta" } },
     { "ANSI bright cyan", "bright_cyan", { "terminal.ansi.bright_cyan" } },
     { "ANSI bright white", "bright_white", { "terminal.ansi.bright_white" } },
-    -- The lightened fg (white equals fg in onedark). Upstream's exports have
-    -- no bright foreground of their own: the `bright_fg` its helper computes
-    -- lightens yellow by mistake and only the rio export reads it.
+    -- The lightened fg where white equals fg, as in onedark; a Variant whose
+    -- white differs from fg (onelight) must revisit this rule. Upstream's
+    -- exports have no bright foreground of their own: the `bright_fg` its
+    -- helper computes lightens yellow by mistake and only the rio export
+    -- reads it.
     { "Bright foreground", "bright_white", { "terminal.bright_foreground" } },
     -- Dim: the normal colour at 60%, where the exports darken by 10, so that
     -- faint text fades without a colour outside the Palette (ADR-0001).

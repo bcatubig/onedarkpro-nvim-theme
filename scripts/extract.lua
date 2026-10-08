@@ -60,11 +60,11 @@ end
 -- Upstream's terminal exports (ghostty, kitty, wezterm and the rest) add the
 -- Bright Colours by lightening these base colours by 10: `add_bright_colors`
 -- in upstream/lua/onedarkpro/extra/init.lua. That function is local to
--- Upstream's extra module, so its calls are repeated here against Upstream's
--- own `lighten` with Upstream's amount; nothing is recomputed. Its
--- `bright_fg`, which lightens yellow, is a typo in Upstream and is not
--- emitted. nvim's built-in terminal brightens by a different algorithm that
--- none of the user's terminals use. Listed in the order of the base colours.
+-- Upstream's extra module, so its recipe, the colours and the amount, is
+-- repeated here as calls to Upstream's own `lighten`; the terminal oracle
+-- test catches any drift from Upstream's export (ADR-0003). Its `bright_fg`,
+-- which lightens yellow, is a typo in Upstream and is not emitted. Listed in
+-- the order of the base colours.
 local BRIGHT_FROM = { "red", "orange", "yellow", "green", "cyan", "blue", "purple", "white", "black", "gray" }
 local BRIGHT_AMOUNT = 10
 

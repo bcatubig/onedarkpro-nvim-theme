@@ -5,8 +5,10 @@
 local h = require("helpers")
 
 -- The Style Keys of ticket #4, grouped by Palette colour: { Palette colour,
--- its onedark literal, the Style Keys it fills }. Alpha-bearing keys are
--- checked separately.
+-- its onedark literal, the Style Keys it fills }. Alpha-bearing keys, the
+-- terminal's dim colours of ticket #5 among them, are checked separately
+-- below; the terminal's other Style Keys are checked against Upstream's
+-- export in terminal_test.lua.
 local GROUPS = {
   { "bg", "#282c34", {
     "background", "editor.background", "editor.gutter.background", "surface.background",
