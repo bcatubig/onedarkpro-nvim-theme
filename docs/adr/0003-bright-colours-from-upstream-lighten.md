@@ -5,4 +5,4 @@ Upstream's terminal exports add the Bright Colours in `add_bright_colors`, a fun
 ## Consequences
 
 - The recipe can drift from Upstream's without a build failure. The terminal oracle test, which reads Upstream's committed ghostty export from the submodule, fails on any such drift at the next `make`.
-- Upstream's `bright_fg`, which lightens yellow by mistake, is not emitted. nvim's built-in terminal brightens by a different algorithm (`brighten` by 15) and is not used, because the user's terminals take the exports.
+- Upstream's `bright_fg`, which lightens yellow by mistake, is not emitted; the Palette's `bright_fg` is the lightened `fg` that line meant to compute, and it fills Zed's bright foreground, a slot the exports do not have. nvim's built-in terminal brightens by a different algorithm (`brighten` by 15) and is not used, because the user's terminals take the exports.

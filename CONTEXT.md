@@ -27,7 +27,7 @@ A Palette colour Upstream computes from a base colour by lighten, darken, bright
 _Avoid_: generated colour, computed colour
 
 **Bright Colour**:
-A Palette colour Upstream's terminal exports (ghostty, kitty, wezterm and the rest) add by lightening a base colour by 10: bright_red, bright_green, and so on, with bright_white the lightened `white`. nvim itself never shows one; its built-in terminal brightens by a different algorithm.
+A Palette colour Upstream's terminal exports (ghostty, kitty, wezterm and the rest) add by lightening a base colour by 10: bright_red, bright_green, and so on, with bright_white the lightened `white` and bright_fg the lightened `fg`. nvim itself never shows one; its built-in terminal brightens by a different algorithm.
 _Avoid_: bright ANSI colour, brightened colour
 
 **Highlight Group**:

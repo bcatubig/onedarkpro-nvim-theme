@@ -26,6 +26,23 @@ function M.palette(variant)
   return json.decode(util.read(M.root .. "/palettes/" .. variant .. ".json"))
 end
 
+-- The Themes the Theme Family ships, each with its Variant, for tests that
+-- run the same assertions against every Theme.
+M.THEMES = {
+  { name = "OneDarkPro Onedark", variant = "onedark" },
+  { name = "OneDarkPro Onelight", variant = "onelight" },
+}
+
+-- The Theme named `name` in the built Theme Family.
+function M.theme(name, path)
+  for _, theme in ipairs(M.theme_family(path).themes) do
+    if theme.name == name then
+      return theme
+    end
+  end
+  error("the Theme Family has no Theme named " .. name, 2)
+end
+
 function M.eq(actual, expected, label)
   if actual ~= expected then
     error(string.format("%s: expected %s, got %s", label, vim.inspect(expected), vim.inspect(actual)), 2)

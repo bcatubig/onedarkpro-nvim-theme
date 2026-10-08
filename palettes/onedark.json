@@ -53,6 +53,7 @@
     "bright_purple": "#d7a1e7",
     "bright_white": "#c8cdd5",
     "bright_black": "#3e4451",
-    "bright_gray": "#737c8c"
+    "bright_gray": "#737c8c",
+    "bright_fg": "#c8cdd5"
   }
 }

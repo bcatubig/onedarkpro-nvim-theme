@@ -12,16 +12,18 @@ local function colour_set(palette)
   return set
 end
 
-test("every colour in OneDarkPro Onedark, alpha stripped, is in the onedark Palette", function()
-  local theme = h.theme_family().themes[1]
-  local palette = colour_set(h.palette("onedark"))
-  local count = 0
-  h.each_colour(theme.style, function(path, colour)
-    count = count + 1
-    assert(palette[colour:sub(1, 7):lower()], path .. " = " .. colour .. " is not in the onedark Palette")
+for _, t in ipairs(h.THEMES) do
+  test(string.format("every colour in %s, alpha stripped, is in the %s Palette", t.name, t.variant), function()
+    local theme = h.theme(t.name)
+    local palette = colour_set(h.palette(t.variant))
+    local count = 0
+    h.each_colour(theme.style, function(path, colour)
+      count = count + 1
+      assert(palette[colour:sub(1, 7):lower()], path .. " = " .. colour .. " is not in the " .. t.variant .. " Palette")
+    end)
+    assert(count > 0, "no colours found in the Theme")
   end)
-  assert(count > 0, "no colours found in the Theme")
-end)
+end
 
 test("build fails, naming the key and the colour, when the Mapping introduces a colour outside the Palette", function()
   local dir = h.tempdir()

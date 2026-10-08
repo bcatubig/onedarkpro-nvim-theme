@@ -210,12 +210,12 @@ return {
     { "ANSI bright magenta", "bright_purple", { "terminal.ansi.bright_magenta" } },
     { "ANSI bright cyan", "bright_cyan", { "terminal.ansi.bright_cyan" } },
     { "ANSI bright white", "bright_white", { "terminal.ansi.bright_white" } },
-    -- The lightened fg where white equals fg, as in onedark; a Variant whose
-    -- white differs from fg (onelight) must revisit this rule. Upstream's
-    -- exports have no bright foreground of their own: the `bright_fg` its
-    -- helper computes lightens yellow by mistake and only the rio export
-    -- reads it.
-    { "Bright foreground", "bright_white", { "terminal.bright_foreground" } },
+    -- The lightened fg, the Bright Colour Upstream's exports meant by
+    -- `bright_fg` (their helper lightens yellow by mistake, and only the rio
+    -- export reads it). In onedark white equals fg, so this is bright_white;
+    -- in onelight bright_white is #ffffff on a #fafafa terminal, and the
+    -- lightened fg stays a readable grey.
+    { "Bright foreground", "bright_fg", { "terminal.bright_foreground" } },
     -- Dim: the normal colour at 60%, where the exports darken by 10, so that
     -- faint text fades without a colour outside the Palette (ADR-0001).
     { "ANSI dim black", { "black", alpha = "99" }, { "terminal.ansi.dim_black" } },
