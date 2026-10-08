@@ -79,5 +79,5 @@ A Syntax Key whose Zed colour differs from what nvim shows in some language, bec
 _Avoid_: bug, mismatch, known issue
 
 **Query Difference**:
-A token Zed and nvim colour differently because Zed's highlight query names a different capture for it than nvim-treesitter's does, or names none. Not a Deviation: no Filetype Override is involved. Some could be closed by giving Zed's capture a Syntax Key of its own; the rest belong to Zed's grammars. Listed per language in the sign-off checklist so they are not mistaken for Mapping errors.
+A token Zed and nvim colour differently because Zed's highlight query names a different capture for it than nvim-treesitter's does, or names none. Not a Deviation: no Filetype Override is involved. Each is recorded per language with the colour each editor shows.
 _Avoid_: grammar bug, Zed bug, mismatch

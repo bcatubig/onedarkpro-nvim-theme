@@ -91,7 +91,9 @@ func run() {
 	_ = q.Push(1)
 	out := make(chan int)
 	go drain(q, out)
+	seen := make(map[int]bool)
 	for v := range out {
-		fmt.Println(v, 1e3, 'x', true, out != nil)
+		seen[v] = true
+		fmt.Println(v, 1e3, 'x', true, len(seen))
 	}
 }

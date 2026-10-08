@@ -40,6 +40,7 @@ variable "replicas" {
 
 locals {
   name      = "${var.region}-queue"
+  banner    = "ready\tfor ${var.region}\n"
   is_prod   = terraform.workspace == "prod"
   cidr      = cidrsubnet("10.0.0.0/16", 8, 1)
   all_tags  = merge(var.tags, { Name = local.name, Env = terraform.workspace })

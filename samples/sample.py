@@ -17,7 +17,7 @@ DEFAULT_NAME = "jobs"
 
 
 def retry(times: int = MAX_RETRIES):
-    """A decorator factory; the decorator lines below exercise `attribute`."""
+    """A decorator factory for the decorator lines below."""
 
     def wrap(fn):
         @functools.wraps(fn)

@@ -33,7 +33,8 @@ Spec stories 5, 6, 7.
 
 | Token class | In the sample | Expected | Zed Syntax Key | nvim group |
 | --- | --- | --- | --- | --- |
-| Keywords | `package`, `import`, `type`, `func`, `const`, `var`, `for`, `range`, `if`, `return`, `go`, `defer`, `switch`, `case`, `default`, `break`, `chan`, `map`, `struct`, `interface` | purple | `keyword`, `keyword.control` | Keyword, `@keyword.*`, `@type.builtin` for `chan`/`map` |
+| Keywords | `package`, `import`, `type`, `func`, `const`, `var`, `for`, `range`, `if`, `return`, `go`, `defer`, `switch`, `case`, `default`, `break`, `struct`, `interface` | purple | `keyword`, `keyword.control` | Keyword, `@keyword.*` |
+| `chan`, `map` | `chan<- int`, `make(chan int)`, `make(map[int]bool)` | purple; the two agree only because nvim-treesitter names them `@type.builtin` and the Go Filetype Override colours that purple (Deviation 2's nvim side) | `keyword` | `@type.builtin.go` |
 | Functions and methods | `NewQueue`, `Push`, `describe`, `drain`, `run`; calls `errors.New`, `fmt.Errorf`, `sb.WriteString` | blue | `function`, `function.method` | `@function`, `@function.method` |
 | Builtin functions | `make`, `len`, `append`, `close` | cyan | `function.builtin` | `@function.builtin.go` |
 | Types | `State`, `Queue`, `Sizer`, `strings.Builder`, `T` | yellow | `type` | `@type` |
@@ -64,10 +65,10 @@ Spec stories 8, 9.
 | Token class | In the sample | Expected | Zed Syntax Key | nvim group |
 | --- | --- | --- | --- | --- |
 | Keywords | `def`, `class`, `return`, `if`, `else`, `for`, `in`, `is`, `not`, `or`, `try`, `except`, `raise`, `from`, `import`, `with`, `as`, `match`, `case`, `lambda` | purple | `keyword`, `keyword.operator`, `keyword.definition` | `@keyword.*` |
-| Decorators | `@dataclass`, `@property`, `@classmethod`, `@functools.wraps(fn)`, `@retry(times=2)` | **Deviation 10**: all blue in Zed. nvim: the `@` blue; `property`, `classmethod`, `wraps` blue; `dataclass`, `retry` purple; `functools` red | `function.decorator`, `attribute` | `@odp.decorator.python`, `@attribute`, `@attribute.builtin` |
+| Decorators | `@dataclass`, `@property`, `@classmethod`, `@functools.wraps(fn)`, `@retry(times=2)` | blue, the whole decorator, in Zed. nvim: the `@` blue; `property`, `classmethod`, `wraps` blue; `dataclass`, `retry` purple; `functools` red (Query Difference, below) | `function.decorator`, `attribute` | `@odp.decorator.python`, `@attribute`, `@attribute.builtin` |
 | `self`, `cls` | every method | yellow | `variable.special` | `@variable.builtin` |
 | Builtin functions | `len`, `isinstance`, `print`, `sorted`, `open` | **Deviation 4**: cyan in Zed, blue in nvim | `function.builtin` | `@odp.function.builtin.python` |
-| Type constructors | `range(times)`, `str(path)` | **Deviation 4**: yellow in Zed, blue in nvim | `type.builtin` | `@odp.function.builtin.python` |
+| Type constructors | `range(times)`, `str(path)` | yellow in Zed, blue in nvim (Query Difference, below) | `type.builtin` | `@odp.function.builtin.python` |
 | Builtin types in annotations | `int`, `str`, `bool`, `float`, `list[int]`, `int \| None` | yellow | `type.builtin` | Type |
 | Classes and exceptions | `Queue`, `Pipeline`, `Path`, `ValueError`, `RuntimeError` | yellow | `type.class` (inherits `type`) | `@type` |
 | Constants | `MAX_RETRIES`, `DEFAULT_NAME` | orange | `constant` | `@constant` |
@@ -83,9 +84,12 @@ Spec stories 8, 9.
 | Delimiters | `.`, `,`, `:` | fg | `punctuation.delimiter` | Delimiter |
 | Comments | `# a trailing comment` | comment | `comment` | Comment |
 
-Deviations: 1, 4, 5, 8, 9, 10.
+Deviations: 1, 4, 5, 8, 9.
 
 Query Differences in this sample:
+
+- **Decorator names** `dataclass`, `retry`, and the `functools` in `@functools.wraps`: blue in Zed, where the whole decorator is `function.decorator`; in nvim the `@` is blue (Upstream's `@odp.decorator.python`), the name purple (the global `@attribute`), `functools` red. `property`, `classmethod` and `wraps` are blue in both. Zed sends only the three builtin decorators to `attribute`, which is why `attribute` is blue (README, Filetype Override rule).
+- **Type constructors** `range(times)`, `str(path)`: yellow in Zed, which names them `type.builtin` in call position, blue in nvim (`@odp.function.builtin.python`). The same tokens would be cyan under Deviation 4 if Zed named them `function.builtin`.
 
 - **Keyword-argument names** `name=`, `times=`, `sep=`, `file=`, `encoding=`, `default_factory=`: blue in Zed (`function.kwargs`, which inherits `function`), red in nvim (`@variable.parameter`). Closable by giving `function.kwargs` its own Syntax Key, red; a follow-up decision.
 - **Imported names** `functools`, `os`, `dataclasses`, `dataclass`, `field`, `pathlib`: red in Zed (`variable`; `Path` yellow as a class), fg in nvim (Upstream's `@odp.import_module.python`). Zed's query has no capture for import lists.
@@ -106,6 +110,7 @@ Spec story 10. Zed needs the Terraform extension (installed).
 | Nested block types | `required_providers`, `validation`, `filter`, `root_block_device`, `lifecycle`, `dynamic`, `content` | yellow | `type` | `@type` |
 | Attributes | `required_version`, `region`, `type`, `default`, `condition`, `ami`, `count`, `tags` | red | `variable` | `@variable.member` |
 | Strings | `">= 1.6"`, `"hashicorp/aws"`, `"${var.region}-queue"`, the heredoc body | green | `string` | `@string` |
+| Escapes | `\t`, `\n` in `"ready\tfor ${var.region}\n"` | green, as string text: neither Zed's nor nvim-treesitter's HCL query has an escape capture | `string` | `@string` |
 | Interpolation markers | `${` and `}` in `"${var.region}-queue"` and the heredoc | fg | `punctuation.special` | `@punctuation.special` |
 | Heredoc markers | `<<-EOT`, `EOT` | fg | `punctuation.delimiter` | `@punctuation.delimiter` |
 | Functions | `map`, `cidrsubnet`, `merge`, `format`, `toset` | blue | `function` | `@function` |
@@ -241,7 +246,7 @@ Spec stories 14 to 41. Style Keys are in `scripts/mapping.lua` under the Chrome 
 | 20 | Selection | select text | `selection` (player one) |
 | 21 | Cursor | | purple |
 | 22 | Search | `cmd-f` for `queue` | matches `highlight` at 30%, active match at 55% (composites below) |
-| 23 | Indent guides | any indented sample | `indentline`; the active scope's guide blue |
+| 23 | Indent guides | any indented sample | `indentline`; the guide of the indent level the cursor is in, blue |
 | 24 | Invisibles and placeholders | `show_whitespaces: all`; an empty search box | gray |
 | 25 | Editor, project panel, panels, active tab | | `bg` |
 | 26 | Status bar, title bar, tab bar, inactive tabs | | `bg_statusline` |
@@ -284,6 +289,8 @@ printf 'normal   \033[2mfaint (SGR 2)\033[0m   \033[2;31mfaint red\033[0m   \033
 Expected: slots 0 to 7 are `black`, `red`, `green`, `yellow`, `blue`, `purple`, `cyan`, `white`; slots 8 to 15 are `gray` then the Bright Colours. In Onelight slot 0 is the dark grey (#6a6a6a) and slot 7 the near-white (#fafafa), as in ghostty. Faint text is the normal colour at 70% in Zed.
 
 ## Palette reference
+
+Copied from `palettes/onedark.json` and `palettes/onelight.json` at Upstream 24c806c. The Palette files are the record; after a re-sync, read the values there.
 
 Base colours:
 

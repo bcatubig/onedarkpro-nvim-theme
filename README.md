@@ -36,7 +36,7 @@ The Theme Family, `themes/onedarkpro.json`, is committed, so installing needs on
 Two facts about Zed worth knowing:
 
 - Zed does not hot-reload theme JSON. After a rebuild, quit Zed and relaunch it.
-- Zed's extension index is rebuilt at launch only when the `installed/` directory is newer than the index. The theme file itself is loaded whole at every launch, so a rebuilt Theme shows up after a restart, but a Theme with a *new name* needs `touch "$HOME/Library/Application Support/Zed/extensions/installed"` before the restart to appear in the theme selector.
+- Zed's extension index is rebuilt at launch only when the `installed/` directory is newer than the index. The Theme Family itself is loaded whole at every launch, so a rebuilt Theme shows up after a restart, but a Theme with a *new name* needs `touch "$HOME/Library/Application Support/Zed/extensions/installed"` before the restart to appear in the theme selector.
 
 Zed's hosted theme schema lags Zed's real key set (it lacks `version_control`, `vim`, `minimap` and some editor keys). Zed loads those keys regardless; editor-side schema validation may warn on them.
 
@@ -78,7 +78,7 @@ Read the Palette diff first: it shows every colour Upstream changed, by name. Th
 
 **Syntax Keys are copied from Upstream's Highlight Groups**: the treesitter table first, then vim syntax groups and LSP semantic tokens where treesitter has no entry. Each entry in the Mapping names the Highlight Group it was copied from. Sub-keys not listed inherit by Zed's longest-dot-prefix rule, so `keyword.control` is `keyword` and `function.decorator` is `function`.
 
-**Filetype Override rule.** Upstream scopes some Highlight Groups to one language (`@punctuation.bracket.python` is orange where brackets are purple elsewhere). Zed has no per-language colours, so one global value must be chosen for each Syntax Key. The global Upstream value wins unless no language the user writes would ever show it; in that case the value from the emitting language with the most files in the user's code wins. Applied once, this makes `function.builtin` cyan (Go's `@function.builtin.go`) and leaves every other conflict at the global value. Markdown-only Syntax Keys (`title`, `emphasis`, `text.literal`, `link_text`, `link_uri`, `punctuation.list_marker` and so on) take Upstream's Markdown override, because Zed emits them only from the Markdown grammars.
+**Filetype Override rule.** Upstream scopes some Highlight Groups to one language (`@punctuation.bracket.python` is orange where brackets are purple elsewhere). Zed has no per-language colours, so one global value must be chosen for each Syntax Key. The global Upstream value wins unless no language the user writes would ever show it; in that case the value from the emitting language with the most files in the user's code wins. Applied once, this makes `function.builtin` cyan (Go's `@function.builtin.go`) and `attribute` blue (the builtin decorators `@property`, `@classmethod` and `@staticmethod` are the only tokens Zed names `attribute`, and nvim shows them blue), and leaves every other conflict at the global value. Markdown-only Syntax Keys (`title`, `emphasis`, `text.literal`, `link_text`, `link_uri`, `punctuation.list_marker` and so on) take the Markdown Filetype Override's values, because Zed emits them only from the Markdown grammars.
 
 **Chrome Rules.** Every Style Key is filled by a named rule in `scripts/mapping.lua`: "Editor surface" is `bg`, "Current line" is `cursorline`, "Search match" is `highlight` at 30%. A rule names a Palette colour, never a literal, so the same rules fill every Variant without a second design pass. Where a rule echoes an nvim Highlight Group (CursorLine, Visual, LineNr, Pmenu, DiffAdd) its comment says so.
 
@@ -89,13 +89,12 @@ A Deviation is a Syntax Key whose Zed colour differs from what nvim shows in som
 1. **Python, YAML and TypeScript brackets** are purple (`punctuation.bracket`); nvim shows orange.
 2. **Go builtin types** (`int`, `string`, `error`, `any`) are yellow (`type.builtin`); nvim shows purple.
 3. **Go constants** are orange (`constant`); nvim shows red.
-4. **Python builtin functions** are cyan (`function.builtin`), and the type constructors `str()`, `list()`, `range()` yellow (`type.builtin`); nvim shows all of them blue.
+4. **Python builtin functions** are cyan (`function.builtin`); nvim shows blue.
 5. **Python `None`** is purple (`constant.builtin`); nvim shows orange.
 6. **JSON braces and brackets** are purple; nvim shows cyan braces and orange brackets.
 7. **TOML keys** are red (`property`); nvim shows purple.
 8. **Python splat operators** in `*args` and `**kwargs` are cyan (`operator`); nvim shows fg.
 9. **Python f-string braces** are fg (`punctuation.special`); nvim shows purple.
-10. **Python decorator names** are blue (`function.decorator`); nvim shows the `@` blue and the name after it purple, except builtins such as `@property` and dotted calls such as `@a.b()`, which are blue too.
 
 Zed and nvim also differ where Zed's highlight query and nvim-treesitter's capture the same token under different names, or Zed's captures nothing. Those are Query Differences, not Deviations: no Filetype Override is involved and the Mapping cannot reach them. They are listed per language in the sign-off checklist.
 
