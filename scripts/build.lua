@@ -17,6 +17,8 @@ local PALETTES = root .. "/palettes"
 local SCHEMA = "https://zed.dev/schema/themes/v0.2.0.json"
 local FAMILY = "OneDarkPro"
 local AUTHOR = "Brandon Catubig"
+-- Upstream's `transparency = false`: the window background is opaque.
+local APPEARANCE = "opaque"
 
 local opts = {
   mapping = root .. "/scripts/mapping.lua",
@@ -79,8 +81,9 @@ local function build_theme(palette)
   local name = theme_name(palette.variant)
 
   -- Resolve a Mapping value for `key`. A value names a Palette colour
-  -- ("purple"), optionally with alpha ({ "purple", alpha = "33" }), or is a
-  -- literal "#rrggbb[aa]". Either way the result must be Palette-faithful.
+  -- ("purple"), optionally with alpha ({ "purple", alpha = "33" }, two hex
+  -- digits), or is a literal "#rrggbb[aa]". Either way the result must be
+  -- Palette-faithful.
   local function colour_for(key, spec)
     local colour_name, alpha = spec, nil
     if type(spec) == "table" then
@@ -97,6 +100,9 @@ local function build_theme(palette)
       end
     end
     if alpha then
+      if type(alpha) ~= "string" or not alpha:match("^%x%x$") then
+        util.fail(string.format("Mapping: %s %s has alpha %s, not two hex digits", name, key, vim.inspect(alpha)))
+      end
       colour = colour .. alpha
     end
     if not palette_set[colour:sub(1, 7):lower()] then
@@ -109,11 +115,42 @@ local function build_theme(palette)
   theme:set("name", name)
   theme:set("appearance", palette.appearance)
 
+  -- Style Keys are filled by Chrome Rules { name, colour-spec, { keys } }:
+  -- every key in a rule takes the rule's one colour. A key may be filled by
+  -- one rule only, so a rule cannot silently override an earlier one.
   local style = json.object()
-  for _, entry in ipairs(mapping.style) do
-    local key, spec = entry[1], entry[2]
-    style:set(key, colour_for(key, spec))
+  style:set("background.appearance", APPEARANCE)
+  for _, rule in ipairs(mapping.style) do
+    local label, spec, keys = rule[1], rule[2], rule[3]
+    if type(label) ~= "string" or type(keys) ~= "table" then
+      util.fail(string.format("Mapping: %s Chrome Rule %s is not { name, colour, { keys } }", name, vim.inspect(label)))
+    end
+    for _, key in ipairs(keys) do
+      if style:has(key) then
+        util.fail(string.format("Mapping: %s %s is filled twice, last by the Chrome Rule %q", name, key, label))
+      end
+      style:set(key, colour_for(key, spec))
+    end
   end
+
+  -- Players are { cursor, background, selection } colour-specs; accents are
+  -- colour-specs. Both are arrays in the Theme, so their keys in messages
+  -- are written as Zed's JSON paths, players[0].cursor and accents[0].
+  local players = {}
+  for i, player in ipairs(mapping.players or {}) do
+    local colours = json.object()
+    for _, field in ipairs({ "cursor", "background", "selection" }) do
+      colours:set(field, colour_for(string.format("players[%d].%s", i - 1, field), player[field]))
+    end
+    players[#players + 1] = colours
+  end
+  style:set("players", players)
+
+  local accents = {}
+  for i, spec in ipairs(mapping.accents or {}) do
+    accents[#accents + 1] = colour_for(string.format("accents[%d]", i - 1), spec)
+  end
+  style:set("accents", accents)
 
   -- A Syntax Key entry is { key, colour-spec, font_style = ..., font_weight = ... };
   -- the font fields are optional and are the only ones Zed reads besides color.

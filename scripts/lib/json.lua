@@ -14,6 +14,10 @@ function M.is_object(value)
   return getmetatable(value) == Object
 end
 
+function Object:has(key)
+  return self.present[key] == true
+end
+
 function Object:set(key, value)
   if not self.present[key] then
     self.keys[#self.keys + 1] = key
