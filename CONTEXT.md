@@ -19,12 +19,16 @@ One of Upstream's five colourschemes: `onedark`, `onelight`, `onedark_vivid`, `o
 _Avoid_: flavour, scheme, colorscheme
 
 **Palette**:
-The named colours a Variant defines. The fourteen base colours (bg, fg, red, orange, yellow, green, cyan, blue, purple, white, black, gray, highlight, comment) plus the Derived Colours.
+The named colours a Variant defines. The fourteen base colours (bg, fg, red, orange, yellow, green, cyan, blue, purple, white, black, gray, highlight, comment) plus the Derived Colours and the Bright Colours.
 _Avoid_: colours, theme colors
 
 **Derived Colour**:
-A Palette colour Upstream computes from a base colour by lighten, darken, brighten or blend (cursorline, selection, float_bg, fg_gutter, diff_add, git_change, and so on).
+A Palette colour Upstream computes from a base colour by lighten, darken, brighten or blend for its own Highlight Groups (cursorline, selection, float_bg, fg_gutter, diff_add, git_change, and so on).
 _Avoid_: generated colour, computed colour
+
+**Bright Colour**:
+A Palette colour Upstream's terminal exports (ghostty, kitty, wezterm and the rest) add by lightening a base colour by 10: bright_red, bright_green, and so on, with bright_white the lightened `white`. nvim itself never shows one; its built-in terminal brightens by a different algorithm.
+_Avoid_: bright ANSI colour, brightened colour
 
 **Highlight Group**:
 An nvim styling target: a vim group (`Comment`), a treesitter capture (`@keyword`), or an LSP semantic token (`@lsp.type.class`). Upstream's side of the Mapping.

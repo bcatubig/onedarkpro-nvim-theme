@@ -63,11 +63,11 @@ local function load_palettes(dir)
   return palettes
 end
 
--- The colours of a Variant's Palette: by name, and as a set for the
--- Palette-faithful check.
+-- The colours of a Variant's Palette (base colours, Derived Colours and
+-- Bright Colours): by name, and as a set for the Palette-faithful check.
 local function palette_colours(palette)
   local by_name, set = {}, {}
-  for _, group in ipairs({ palette.base, palette.derived }) do
+  for _, group in ipairs({ palette.base, palette.derived, palette.bright }) do
     for name, colour in pairs(group) do
       by_name[name] = colour
       set[colour:lower()] = true

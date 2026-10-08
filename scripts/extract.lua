@@ -2,8 +2,9 @@
 --
 -- Runs Upstream (olimorris/onedarkpro.nvim, the git submodule under upstream/)
 -- inside this headless nvim and asks it for a Variant's Palette: the base
--- colours and every Derived Colour, exactly as nvim computes them. No colour
--- maths is reimplemented here; see ADR-0002. The result is written to
+-- colours and every Derived Colour, exactly as nvim computes them, and the
+-- Bright Colours, exactly as Upstream's terminal exports compute them. No
+-- colour maths is reimplemented here; see ADR-0002. The result is written to
 -- palettes/<variant>.json.
 --
 --   nvim --clean -l scripts/extract.lua [variant ...]     (default: onedark)
@@ -56,6 +57,28 @@ local function ordered_colours(colours, first)
   return object
 end
 
+-- Upstream's terminal exports (ghostty, kitty, wezterm and the rest) add the
+-- Bright Colours by lightening these base colours by 10: `add_bright_colors`
+-- in upstream/lua/onedarkpro/extra/init.lua. That function is local to
+-- Upstream's extra module, so its recipe, the colours and the amount, is
+-- repeated here as calls to Upstream's own `lighten`; the terminal oracle
+-- test catches any drift from Upstream's export (ADR-0003). Its `bright_fg`,
+-- which lightens yellow, is a typo in Upstream and is not emitted. Listed in
+-- the order of the base colours.
+local BRIGHT_FROM = { "red", "orange", "yellow", "green", "cyan", "blue", "purple", "white", "black", "gray" }
+local BRIGHT_AMOUNT = 10
+
+local function bright_colours(variant)
+  local helpers = require("onedarkpro.helpers")
+  local colours, order = {}, {}
+  for _, base in ipairs(BRIGHT_FROM) do
+    local name = "bright_" .. base
+    colours[name] = helpers.lighten(base, BRIGHT_AMOUNT, variant)
+    order[#order + 1] = name
+  end
+  return ordered_colours(colours, order)
+end
+
 local function extract(variant)
   local upstream_theme = require("onedarkpro.theme").load(variant)
   if type(upstream_theme) ~= "table" then
@@ -67,6 +90,7 @@ local function extract(variant)
   palette:set("upstream", util.upstream_commit(root))
   palette:set("base", ordered_colours(upstream_theme.palette, BASE_ORDER))
   palette:set("derived", ordered_colours(upstream_theme.generated))
+  palette:set("bright", bright_colours(variant))
 
   local path = root .. "/palettes/" .. variant .. ".json"
   util.write(path, json.encode(palette))

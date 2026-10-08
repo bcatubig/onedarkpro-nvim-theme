@@ -42,5 +42,17 @@
     "virtual_text_hint": "#7ec7d1",
     "virtual_text_information": "#90c7f4",
     "virtual_text_warning": "#edd2a1"
+  },
+  "bright": {
+    "bright_red": "#e9969d",
+    "bright_orange": "#ddb48d",
+    "bright_yellow": "#edd4a6",
+    "bright_green": "#b3d39c",
+    "bright_cyan": "#7bc6d0",
+    "bright_blue": "#8fc6f4",
+    "bright_purple": "#d7a1e7",
+    "bright_white": "#c8cdd5",
+    "bright_black": "#3e4451",
+    "bright_gray": "#737c8c"
   }
 }
