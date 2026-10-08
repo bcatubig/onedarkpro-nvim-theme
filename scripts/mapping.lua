@@ -7,10 +7,10 @@
 -- committed Mapping must name Palette colours: a literal is not a rule and
 -- does not carry across Variants (ADR-0001).
 --
--- Style Keys are filled by the Chrome rules of spec #1. A Chrome rule is
+-- Style Keys are filled by the Chrome Rules of spec #1. A Chrome Rule is
 -- { name, value, { Style Keys... } }: every key in the rule takes the one
 -- value, so a rule reads here as it was written and applies unchanged to any
--- Variant's Palette. A Style Key may appear in one rule only. `players` and
+-- Variant's Palette. A Style Key may appear in one Chrome Rule only. `players` and
 -- `accents`, Zed's two array-valued Style Keys, have their own sections;
 -- `background.appearance` is a constant of the build ("opaque", Upstream's
 -- transparency = false).
@@ -58,7 +58,7 @@
 --      @odp.brackets.json.
 --   7. TOML keys: `property` is red; nvim shows purple from @property.toml.
 return {
-  -- Style Keys, by Chrome rule. A comment names the nvim Highlight Group a
+  -- Style Keys, by Chrome Rule. A comment names the nvim Highlight Group a
   -- rule echoes where there is one.
   style = {
     -- Surfaces

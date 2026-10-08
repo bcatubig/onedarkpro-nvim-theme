@@ -53,13 +53,13 @@ A Zed code-token slot under `style.syntax`, such as `keyword` or `punctuation.br
 _Avoid_: scope, highlight
 
 **Chrome**:
-The set of Style Keys with no Highlight Group counterpart: title bar, tabs, panels, status bar, scrollbars, players, and similar.
+The Style Keys of a Theme taken together: title bar, tabs, panels, status bar, scrollbars, players, and the editor surfaces (current line, gutter, selection, search) that nvim also styles. Filled by Chrome Rules, which may echo a Highlight Group but never copy one.
 _Avoid_: UI, non-editor colours
 
 ### This project
 
 **Mapping**:
-The table assigning a Palette colour to each Syntax Key and Style Key. For Syntax Keys it is copied from Upstream's Highlight Groups. For Chrome it is this project's own.
+The table assigning a Palette colour to each Syntax Key and Style Key. For Syntax Keys it is copied from Upstream's Highlight Groups. For Chrome it is this project's own Chrome Rules.
 _Avoid_: colour assignments, overrides
 
 **Chrome Rule**:

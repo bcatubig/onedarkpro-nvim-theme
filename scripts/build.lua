@@ -81,8 +81,9 @@ local function build_theme(palette)
   local name = theme_name(palette.variant)
 
   -- Resolve a Mapping value for `key`. A value names a Palette colour
-  -- ("purple"), optionally with alpha ({ "purple", alpha = "33" }), or is a
-  -- literal "#rrggbb[aa]". Either way the result must be Palette-faithful.
+  -- ("purple"), optionally with alpha ({ "purple", alpha = "33" }, two hex
+  -- digits), or is a literal "#rrggbb[aa]". Either way the result must be
+  -- Palette-faithful.
   local function colour_for(key, spec)
     local colour_name, alpha = spec, nil
     if type(spec) == "table" then
@@ -99,6 +100,9 @@ local function build_theme(palette)
       end
     end
     if alpha then
+      if type(alpha) ~= "string" or not alpha:match("^%x%x$") then
+        util.fail(string.format("Mapping: %s %s has alpha %s, not two hex digits", name, key, vim.inspect(alpha)))
+      end
       colour = colour .. alpha
     end
     if not palette_set[colour:sub(1, 7):lower()] then
@@ -111,19 +115,19 @@ local function build_theme(palette)
   theme:set("name", name)
   theme:set("appearance", palette.appearance)
 
-  -- Style Keys are filled by Chrome rules { name, colour-spec, { keys } }:
+  -- Style Keys are filled by Chrome Rules { name, colour-spec, { keys } }:
   -- every key in a rule takes the rule's one colour. A key may be filled by
   -- one rule only, so a rule cannot silently override an earlier one.
   local style = json.object()
   style:set("background.appearance", APPEARANCE)
-  for _, group in ipairs(mapping.style) do
-    local rule, spec, keys = group[1], group[2], group[3]
-    if type(rule) ~= "string" or type(keys) ~= "table" then
-      util.fail(string.format("Mapping: %s Chrome rule %s is not { name, colour, { keys } }", name, vim.inspect(rule)))
+  for _, rule in ipairs(mapping.style) do
+    local label, spec, keys = rule[1], rule[2], rule[3]
+    if type(label) ~= "string" or type(keys) ~= "table" then
+      util.fail(string.format("Mapping: %s Chrome Rule %s is not { name, colour, { keys } }", name, vim.inspect(label)))
     end
     for _, key in ipairs(keys) do
       if style:has(key) then
-        util.fail(string.format("Mapping: %s %s is filled twice, last by the rule %q", name, key, rule))
+        util.fail(string.format("Mapping: %s %s is filled twice, last by the Chrome Rule %q", name, key, label))
       end
       style:set(key, colour_for(key, spec))
     end

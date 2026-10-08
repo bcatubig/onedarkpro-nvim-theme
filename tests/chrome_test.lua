@@ -1,11 +1,12 @@
--- The Chrome rules, observed through the built Theme. Expected values are
+-- The Chrome Rules, observed through the built Theme. Expected values are
 -- Upstream's onedark Palette literals: base colours from
 -- upstream/lua/onedarkpro/themes/onedark.lua, Derived Colours from the
 -- committed palettes/onedark.json.
 local h = require("helpers")
 
--- Style Key rule groups of ticket #4: { Palette colour, its onedark literal,
--- the Style Keys it fills }. Alpha-bearing keys are checked separately.
+-- The Style Keys of ticket #4, grouped by Palette colour: { Palette colour,
+-- its onedark literal, the Style Keys it fills }. Alpha-bearing keys are
+-- checked separately.
 local GROUPS = {
   { "bg", "#282c34", {
     "background", "editor.background", "editor.gutter.background", "surface.background",

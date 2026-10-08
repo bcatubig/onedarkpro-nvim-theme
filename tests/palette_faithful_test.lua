@@ -41,3 +41,21 @@ return {
   assert(result.stderr:find("syntax.keyword", 1, true), "stderr does not name the key:\n" .. result.stderr)
   assert(result.stderr:find("#ff0000", 1, true), "stderr does not name the colour:\n" .. result.stderr)
 end)
+
+test("build fails, naming the key, when a Chrome Rule grants alpha that is not two hex digits", function()
+  local dir = h.tempdir()
+  local mapping = dir .. "/mapping.lua"
+  local f = assert(io.open(mapping, "w"))
+  f:write([[
+return {
+  style = { { "Search match", { "highlight", alpha = "4" }, { "search.match_background" } } },
+  syntax = {},
+}
+]])
+  f:close()
+
+  local result = h.run_build({ "--mapping", mapping, "--out", dir .. "/out.json" })
+
+  assert(result.code ~= 0, "build exited 0 although the alpha is malformed")
+  assert(result.stderr:find("search.match_background", 1, true), "stderr does not name the key:\n" .. result.stderr)
+end)
