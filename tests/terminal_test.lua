@@ -1,10 +1,13 @@
 -- The terminal, observed through the built Theme and checked against
 -- Upstream's own output: the ghostty export Upstream commits for each
 -- Variant (upstream/extras/ghostty/onedarkpro_<variant>), read from the
--- submodule. The export is the oracle for the Bright Colours, so they are
--- checked against Upstream's export helper as Upstream ran it, never against
--- a reimplementation. ghostty, kitty and wezterm all take the same colours.
--- Every assertion runs against every Theme the Theme Family ships.
+-- submodule. The export is the oracle for the sixteen ANSI slots, so the
+-- Bright Colours in them are checked against Upstream's export helper as
+-- Upstream ran it, never against a reimplementation. ghostty, kitty and
+-- wezterm all take the same colours. The bright foreground, which the
+-- exports do not have, is checked against Upstream's literal for the
+-- lightened fg (tests/variants.lua). Every assertion runs against every
+-- Theme the Theme Family ships.
 local h = require("helpers")
 
 -- Zed's ANSI Style Keys in the order of ghostty's palette slots 0 to 15.
@@ -42,10 +45,6 @@ local NORMAL = { "black", "red", "green", "yellow", "blue", "magenta", "cyan", "
 -- is the export's bright white, palette 15. In onelight `black` equals `fg`,
 -- so it is the lightened #6a6a6a, #848484, and not the export's bright white
 -- #ffffff, which would be white text on a #fafafa terminal.
-local BRIGHT_FOREGROUND = {
-  onedark = "#c8cdd5",
-  onelight = "#848484",
-}
 
 for _, t in ipairs(h.THEMES) do
   test(string.format("the sixteen ANSI colours of %s equal, slot for slot, Upstream's ghostty export for %s", t.name, t.variant), function()
@@ -75,9 +74,9 @@ for _, t in ipairs(h.THEMES) do
     h.eq(style["terminal.foreground"], export.foreground, "terminal.foreground <- foreground")
   end)
 
-  test(string.format("bright foreground of %s is the lightened fg, %s", t.name, BRIGHT_FOREGROUND[t.variant]), function()
+  test(string.format("bright foreground of %s is the lightened fg, %s", t.name, t.literal.bright_fg), function()
     local style = h.theme(t.name).style
-    h.eq(style["terminal.bright_foreground"], BRIGHT_FOREGROUND[t.variant], "terminal.bright_foreground <- bright_fg")
+    h.eq(style["terminal.bright_foreground"], t.literal.bright_fg, "terminal.bright_foreground <- bright_fg")
   end)
 end
 

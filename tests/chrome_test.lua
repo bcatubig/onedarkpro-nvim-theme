@@ -1,34 +1,10 @@
 -- The Chrome Rules, observed through the built Theme. Expected values are
--- Upstream's Palette literals for each Variant: base colours from
--- upstream/lua/onedarkpro/themes/<variant>.lua, Derived Colours from the
--- committed palettes/<variant>.json. Every assertion runs against every
--- Theme the Theme Family ships; a Chrome Rule names a Palette colour, so the
--- same rule is checked against each Variant's literal for that colour.
+-- Upstream's Palette literals for each Variant (tests/variants.lua). Every
+-- assertion runs against every Theme the Theme Family ships; a Chrome Rule
+-- names a Palette colour, so the same rule is checked against each Variant's
+-- literal for that colour. A tint is written as the Mapping writes it,
+-- { "bg", alpha = "00" }.
 local h = require("helpers")
-
--- The literal of each Palette colour the Chrome Rules name, per Variant.
-local LITERALS = {
-  onedark = {
-    bg = "#282c34", bg_statusline = "#22262d", float_bg = "#21252b", cursorline = "#2d313b",
-    selection = "#414858", purple = "#c678dd", blue = "#61afef", gray = "#5c6370",
-    fg_gutter = "#3d4350", fg = "#abb2bf", comment = "#7f848e", line_number = "#495162",
-    indentline = "#3b4048", fold = "#30333d", diff_change = "#3b3b3b", red = "#e06c75",
-    yellow = "#e5c07b", cyan = "#56b6c2", green = "#98c379", orange = "#d19a66",
-    diff_add = "#353e3c", diff_delete = "#3e343c", git_add = "#405f2b", git_change = "#a67821",
-    git_delete = "#7f1b22", diff_text = "#344f58", diff_text_delete = "#563c44", highlight = "#e2be7d",
-    black = "#282c34", white = "#abb2bf",
-  },
-  onelight = {
-    bg = "#fafafa", bg_statusline = "#f3f3f3", float_bg = "#efefef", cursorline = "#f4f4f4",
-    selection = "#e9e9e9", purple = "#9a77cf", blue = "#118dc3", gray = "#bebebe",
-    fg_gutter = "#e1e1e1", fg = "#6a6a6a", comment = "#9b9fa6", line_number = "#cccccc",
-    indentline = "#e7e7e7", fold = "#f2f2f2", diff_change = "#f9f2e5", red = "#e05661",
-    yellow = "#eea825", cyan = "#56b6c2", green = "#1da912", orange = "#ee9025",
-    diff_add = "#dff0de", diff_delete = "#f7e6e8", git_add = "#85f17c", git_change = "#f9e1b3",
-    git_delete = "#fcedee", diff_text = "#d1e9ec", diff_text_delete = "#f3d1d4", highlight = "#e2be7d",
-    black = "#6a6a6a", white = "#fafafa",
-  },
-}
 
 -- The Style Keys of ticket #4, grouped by Palette colour: { Palette colour,
 -- the Style Keys it fills }. Alpha-bearing keys, the terminal's dim colours
@@ -110,78 +86,81 @@ local GROUPS = {
   { "diff_text_delete", { "version_control.word_deleted" } },
 }
 
--- Alpha is granted to these Style Keys only, as { Palette colour, alpha };
--- players' selections, checked in their own test, are the other exception.
--- Every other colour is #rrggbb.
+-- Alpha is granted to these Style Keys only; players' selections, checked
+-- in their own test, are the other exception. Every other colour is #rrggbb.
 local ALPHA = {
   -- Transparent: bg at 0%
-  ["border.transparent"] = { "bg", "00" },
-  ["ghost_element.background"] = { "bg", "00" },
-  ["ghost_element.disabled"] = { "bg", "00" },
-  ["element.disabled"] = { "bg", "00" },
-  ["scrollbar.track.background"] = { "bg", "00" },
-  ["scrollbar.thumb.border"] = { "bg", "00" },
-  ["minimap.thumb.border"] = { "bg", "00" },
+  ["border.transparent"] = { "bg", alpha = "00" },
+  ["ghost_element.background"] = { "bg", alpha = "00" },
+  ["ghost_element.disabled"] = { "bg", alpha = "00" },
+  ["element.disabled"] = { "bg", alpha = "00" },
+  ["scrollbar.track.background"] = { "bg", alpha = "00" },
+  ["scrollbar.thumb.border"] = { "bg", alpha = "00" },
+  ["minimap.thumb.border"] = { "bg", alpha = "00" },
   -- Search: highlight at 30% and 55%
-  ["search.match_background"] = { "highlight", "4d" },
-  ["search.active_match_background"] = { "highlight", "8c" },
+  ["search.match_background"] = { "highlight", alpha = "4d" },
+  ["search.active_match_background"] = { "highlight", alpha = "8c" },
   -- Scrollbar and minimap thumbs: gray at 40%, 60% hovered, 80% active
-  ["scrollbar.thumb.background"] = { "gray", "66" },
-  ["minimap.thumb.background"] = { "gray", "66" },
-  ["scrollbar.thumb.hover_background"] = { "gray", "99" },
-  ["minimap.thumb.hover_background"] = { "gray", "99" },
-  ["scrollbar.thumb.active_background"] = { "gray", "cc" },
-  ["minimap.thumb.active_background"] = { "gray", "cc" },
+  ["scrollbar.thumb.background"] = { "gray", alpha = "66" },
+  ["minimap.thumb.background"] = { "gray", alpha = "66" },
+  ["scrollbar.thumb.hover_background"] = { "gray", alpha = "99" },
+  ["minimap.thumb.hover_background"] = { "gray", alpha = "99" },
+  ["scrollbar.thumb.active_background"] = { "gray", alpha = "cc" },
+  ["minimap.thumb.active_background"] = { "gray", alpha = "cc" },
   -- Drop target: selection at 50%
-  ["drop_target.background"] = { "selection", "80" },
+  ["drop_target.background"] = { "selection", alpha = "80" },
   -- Diagnostics and status: the colour at 15% behind, at 50% as border
-  ["error.background"] = { "red", "26" }, ["error.border"] = { "red", "80" },
-  ["warning.background"] = { "yellow", "26" }, ["warning.border"] = { "yellow", "80" },
-  ["info.background"] = { "blue", "26" }, ["info.border"] = { "blue", "80" },
-  ["hint.background"] = { "cyan", "26" }, ["hint.border"] = { "cyan", "80" },
-  ["success.background"] = { "green", "26" }, ["success.border"] = { "green", "80" },
-  ["predictive.background"] = { "gray", "26" }, ["predictive.border"] = { "gray", "80" },
+  ["error.background"] = { "red", alpha = "26" }, ["error.border"] = { "red", alpha = "80" },
+  ["warning.background"] = { "yellow", alpha = "26" }, ["warning.border"] = { "yellow", alpha = "80" },
+  ["info.background"] = { "blue", alpha = "26" }, ["info.border"] = { "blue", alpha = "80" },
+  ["hint.background"] = { "cyan", alpha = "26" }, ["hint.border"] = { "cyan", alpha = "80" },
+  ["success.background"] = { "green", alpha = "26" }, ["success.border"] = { "green", alpha = "80" },
+  ["predictive.background"] = { "gray", alpha = "26" }, ["predictive.border"] = { "gray", alpha = "80" },
   -- File statuses without a diff tint take the same pattern
-  ["renamed.background"] = { "blue", "26" }, ["renamed.border"] = { "blue", "80" },
-  ["conflict.background"] = { "blue", "26" }, ["conflict.border"] = { "blue", "80" },
-  ["ignored.background"] = { "gray", "26" }, ["ignored.border"] = { "gray", "80" },
-  ["hidden.background"] = { "gray", "26" }, ["hidden.border"] = { "gray", "80" },
-  ["unreachable.background"] = { "gray", "26" }, ["unreachable.border"] = { "gray", "80" },
+  ["renamed.background"] = { "blue", alpha = "26" }, ["renamed.border"] = { "blue", alpha = "80" },
+  ["conflict.background"] = { "blue", alpha = "26" }, ["conflict.border"] = { "blue", alpha = "80" },
+  ["ignored.background"] = { "gray", alpha = "26" }, ["ignored.border"] = { "gray", alpha = "80" },
+  ["hidden.background"] = { "gray", alpha = "26" }, ["hidden.border"] = { "gray", alpha = "80" },
+  ["unreachable.background"] = { "gray", alpha = "26" }, ["unreachable.border"] = { "gray", alpha = "80" },
   -- Terminal: the dim colours and the dim foreground at 60% of their normal
   -- colour. ANSI black and white are the Palette's black and white, which
   -- equal bg and fg in onedark and are the other way about in onelight.
-  ["terminal.ansi.dim_black"] = { "black", "99" },
-  ["terminal.ansi.dim_red"] = { "red", "99" },
-  ["terminal.ansi.dim_green"] = { "green", "99" },
-  ["terminal.ansi.dim_yellow"] = { "yellow", "99" },
-  ["terminal.ansi.dim_blue"] = { "blue", "99" },
-  ["terminal.ansi.dim_magenta"] = { "purple", "99" },
-  ["terminal.ansi.dim_cyan"] = { "cyan", "99" },
-  ["terminal.ansi.dim_white"] = { "white", "99" },
-  ["terminal.dim_foreground"] = { "fg", "99" },
+  ["terminal.ansi.dim_black"] = { "black", alpha = "99" },
+  ["terminal.ansi.dim_red"] = { "red", alpha = "99" },
+  ["terminal.ansi.dim_green"] = { "green", alpha = "99" },
+  ["terminal.ansi.dim_yellow"] = { "yellow", alpha = "99" },
+  ["terminal.ansi.dim_blue"] = { "blue", alpha = "99" },
+  ["terminal.ansi.dim_magenta"] = { "purple", alpha = "99" },
+  ["terminal.ansi.dim_cyan"] = { "cyan", alpha = "99" },
+  ["terminal.ansi.dim_white"] = { "white", alpha = "99" },
+  ["terminal.dim_foreground"] = { "fg", alpha = "99" },
 }
 
--- Players: { Palette colour, selection as { Palette colour, alpha } }.
--- Player one is the user: purple cursor, selection as Visual. Players two to
--- eight cycle Upstream's accent colours with the selection at 25%.
+-- Players: { Palette colour, selection }. Player one is the user: purple
+-- cursor, selection as Visual. Players two to eight cycle Upstream's accent
+-- colours with the selection at 25%.
 local PLAYERS = {
-  { "purple", { "selection" } },
-  { "blue", { "blue", "40" } },
-  { "green", { "green", "40" } },
-  { "yellow", { "yellow", "40" } },
-  { "red", { "red", "40" } },
-  { "cyan", { "cyan", "40" } },
-  { "orange", { "orange", "40" } },
-  { "gray", { "gray", "40" } },
+  { "purple", "selection" },
+  { "blue", { "blue", alpha = "40" } },
+  { "green", { "green", alpha = "40" } },
+  { "yellow", { "yellow", alpha = "40" } },
+  { "red", { "red", alpha = "40" } },
+  { "cyan", { "cyan", alpha = "40" } },
+  { "orange", { "orange", alpha = "40" } },
+  { "gray", { "gray", alpha = "40" } },
 }
 
 -- Accents: Upstream's RainbowDelimiter order.
 local ACCENTS = { "red", "yellow", "blue", "orange", "green", "purple", "cyan" }
 
 for _, t in ipairs(h.THEMES) do
-  local literal = LITERALS[t.variant]
+  local literal = t.literal
+  -- A colour name, or { name, alpha = "xx" }, as its literal in this Variant.
   local function tinted(spec)
-    return literal[spec[1]] .. (spec[2] or "")
+    if type(spec) == "string" then
+      return literal[spec]
+    end
+    return literal[spec[1]] .. spec.alpha
   end
 
   for _, group in ipairs(GROUPS) do
@@ -197,7 +176,7 @@ for _, t in ipairs(h.THEMES) do
   test(string.format("alpha-granted Style Keys carry their stated tint in %s", t.name), function()
     local style = h.theme(t.name).style
     for key, spec in pairs(ALPHA) do
-      h.eq(style[key], tinted(spec), key .. " <- " .. spec[1] .. " at " .. spec[2])
+      h.eq(style[key], tinted(spec), key .. " <- " .. spec[1] .. " at " .. spec.alpha)
     end
   end)
 
@@ -222,7 +201,7 @@ for _, t in ipairs(h.THEMES) do
       local label = "players[" .. (i - 1) .. "]"
       h.eq(players[i].cursor, literal[expected[1]], label .. ".cursor <- " .. expected[1])
       h.eq(players[i].background, literal[expected[1]], label .. ".background <- " .. expected[1])
-      h.eq(players[i].selection, tinted(expected[2]), label .. ".selection <- " .. expected[2][1])
+      h.eq(players[i].selection, tinted(expected[2]), label .. ".selection")
     end
   end)
 

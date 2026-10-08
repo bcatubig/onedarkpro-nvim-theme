@@ -1,23 +1,8 @@
 -- The Syntax Key Mapping, observed through the built Theme. Expected values
--- are Upstream's Palette literals for each Variant: base colours from
--- upstream/lua/onedarkpro/themes/<variant>.lua and, for Derived Colours, the
--- committed palettes/<variant>.json. Every assertion runs against every
--- Theme the Theme Family ships. Style Keys are checked in chrome_test.lua.
+-- are Upstream's Palette literals for each Variant (tests/variants.lua).
+-- Every assertion runs against every Theme the Theme Family ships. Style
+-- Keys are checked in chrome_test.lua.
 local h = require("helpers")
-
--- The literal of each Palette colour the Syntax Mapping names, per Variant.
-local LITERALS = {
-  onedark = {
-    red = "#e06c75", yellow = "#e5c07b", purple = "#c678dd", blue = "#61afef", cyan = "#56b6c2",
-    green = "#98c379", orange = "#d19a66", comment = "#7f848e", fg = "#abb2bf",
-    inlay_hint = "#4c525c", gray = "#5c6370",
-  },
-  onelight = {
-    red = "#e05661", yellow = "#eea825", purple = "#9a77cf", blue = "#118dc3", cyan = "#56b6c2",
-    green = "#1da912", orange = "#ee9025", comment = "#9b9fa6", fg = "#6a6a6a",
-    inlay_hint = "#d8d8d8", gray = "#bebebe",
-  },
-}
 
 -- The full Syntax Key Mapping of ticket #3, grouped by Palette colour:
 -- { Palette colour, the Syntax Keys it fills }.
@@ -57,7 +42,7 @@ local GROUPS = {
 }
 
 for _, t in ipairs(h.THEMES) do
-  local literal = LITERALS[t.variant]
+  local literal = t.literal
   for _, group in ipairs(GROUPS) do
     local colour, keys = group[1], group[2]
     test(string.format("Syntax Keys mapped to Palette %s are Upstream's %s in %s", colour, literal[colour], t.name), function()

@@ -26,16 +26,14 @@ function M.palette(variant)
   return json.decode(util.read(M.root .. "/palettes/" .. variant .. ".json"))
 end
 
--- The Themes the Theme Family ships, each with its Variant, for tests that
--- run the same assertions against every Theme.
-M.THEMES = {
-  { name = "OneDarkPro Onedark", variant = "onedark" },
-  { name = "OneDarkPro Onelight", variant = "onelight" },
-}
+-- The Themes the Theme Family ships, each with its Variant and the Palette
+-- literals the tests expect (tests/variants.lua), for tests that run the
+-- same assertions against every Theme.
+M.THEMES = require("variants")
 
--- The Theme named `name` in the built Theme Family.
-function M.theme(name, path)
-  for _, theme in ipairs(M.theme_family(path).themes) do
+-- The Theme named `name` in the committed Theme Family.
+function M.theme(name)
+  for _, theme in ipairs(M.theme_family().themes) do
     if theme.name == name then
       return theme
     end

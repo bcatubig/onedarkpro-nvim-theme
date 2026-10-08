@@ -1,4 +1,4 @@
--- The Light Variant: the Chrome Rules name Derived Colours, and Upstream
+-- The light Variant: the Chrome Rules name Derived Colours, and Upstream
 -- computes those per Variant, so the same rule, unchanged, puts OneDarkPro
 -- Onelight's current line, floating surfaces and statusline a shade darker
 -- than its #fafafa editor. Where onedark lightens (its cursorline sits above
@@ -7,14 +7,15 @@
 -- Observed through the built Theme.
 local h = require("helpers")
 
--- Relative luminance of a #rrggbb colour, enough to order two greys.
+-- A luminance weighting of a #rrggbb colour, enough to order two greys.
 local function luminance(hex)
   local r, g, b = hex:match("^#(%x%x)(%x%x)(%x%x)")
   assert(r, "not a #rrggbb colour: " .. tostring(hex))
   return 0.2126 * tonumber(r, 16) + 0.7152 * tonumber(g, 16) + 0.0722 * tonumber(b, 16)
 end
 
--- The Derived surfaces the ticket names, as the Style Keys that show them.
+-- The surfaces ticket #6 names, as the Derived Colour and the Style Key
+-- that shows it.
 local SURFACES = {
   { "cursorline", "editor.active_line.background" },
   { "float_bg", "elevated_surface.background" },

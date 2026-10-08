@@ -3,9 +3,9 @@
 -- Runs Upstream (olimorris/onedarkpro.nvim, the git submodule under upstream/)
 -- inside this headless nvim and asks it for a Variant's Palette: the base
 -- colours and every Derived Colour, exactly as nvim computes them, and the
--- Bright Colours, exactly as Upstream's terminal exports compute them. No
--- colour maths is reimplemented here; see ADR-0002. The result is written to
--- palettes/<variant>.json.
+-- Bright Colours, as Upstream's terminal exports compute them plus the
+-- lightened fg they meant to (ADR-0003). No colour maths is reimplemented
+-- here; see ADR-0002. The result is written to palettes/<variant>.json.
 --
 --   nvim --clean -l scripts/extract.lua [variant ...]     (default: every Variant in VARIANTS)
 
@@ -100,10 +100,11 @@ local function extract(variant)
 end
 
 -- The Variants this extension ships, one Theme each. To add a Variant
--- (onedark_vivid, onedark_dark, vaporwave), add its name here and run make:
--- stage one writes its Palette file, stage two builds a Theme from every
--- committed Palette file by the same Mapping, and the tests take their
--- expected literals from Upstream. No rule or Mapping changes.
+-- (onedark_vivid, onedark_dark, vaporwave): add its name here and run make,
+-- which writes its Palette file and builds its Theme from every committed
+-- Palette file by the same Mapping; then give the tests its Upstream
+-- literals in tests/variants.lua and its Theme name in tests/shape_test.lua.
+-- No rule or Mapping changes.
 local VARIANTS = { "onedark", "onelight" }
 
 local variants = #arg > 0 and arg or VARIANTS
