@@ -1,0 +1,67 @@
+---
+# Exercises the token classes the Mapping colours for YAML, in Ansible shapes:
+# keys, string values, numbers, booleans, null, anchors and aliases, block
+# and flow collections, block scalars, strings with escapes and comments.
+- name: Configure the queue hosts
+  hosts: queue
+  become: true
+  gather_facts: false
+
+  vars:
+    queue_name: jobs
+    queue_limit: 8
+    ratio: 0.5
+    retries: 3
+    defaults: &defaults
+      state: present
+      update_cache: true
+    packages: [redis-server, "python3-redis"]
+    limits: { soft: 1024, hard: 2048 }
+    motd: "Welcome to {{ inventory_hostname }}\n"
+    banner: 'single quotes keep \n literal'
+    notes: |
+      Block scalar, kept
+      line for line.
+    folded: >
+      Folded scalar
+      joins lines.
+    empty: ~
+    nothing: null
+    enabled: yes
+    disabled: false
+    secret: !vault |
+      $ANSIBLE_VAULT;1.1;AES256
+      3131
+
+  pre_tasks:
+    - name: Ensure the apt cache is fresh
+      ansible.builtin.apt:
+        <<: *defaults
+        cache_valid_time: 3600
+      when: ansible_os_family == "Debian"
+
+  tasks:
+    - name: Install packages
+      ansible.builtin.apt:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ packages }}"
+      register: install_result
+      notify: Restart redis
+
+    - name: Render the queue config
+      ansible.builtin.template:
+        src: templates/queue.conf.j2
+        dest: /etc/queue/{{ queue_name }}.conf
+        mode: "0644"
+      vars:
+        limit: "{{ queue_limit | default(8) }}"
+      changed_when: false
+      tags: [config, queue]
+
+  handlers:
+    - name: Restart redis
+      ansible.builtin.service:
+        name: redis-server
+        state: restarted
+...

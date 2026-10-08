@@ -49,14 +49,27 @@
 --   2. Go builtin types: `type.builtin` is yellow; nvim shows purple from
 --      @type.builtin.go.
 --   3. Go constants: `constant` is orange; nvim shows red from @constant.go.
---   4. Python builtin functions: `function.builtin` is cyan; nvim shows blue
---      from @odp.function.builtin.python -> @function.
+--   4. Python builtin functions: `function.builtin` is cyan, and Zed names
+--      the type constructors (`str()`, `list()`, `range()`) `type.builtin`,
+--      yellow; nvim shows all of them blue from
+--      @odp.function.builtin.python -> @function.
 --   5. Python `None`: `constant.builtin` is purple; nvim shows orange from
 --      @constant.builtin.python.
 --   6. JSON braces and brackets: `punctuation.bracket` is purple; nvim shows
 --      cyan braces and orange brackets from @odp.braces.json and
 --      @odp.brackets.json.
 --   7. TOML keys: `property` is red; nvim shows purple from @property.toml.
+--   8. Python splat operators: `operator` is cyan; nvim shows the `*` and `**`
+--      of *args and **kwargs in fg from @odp.operator.splat.python.
+--   9. Python f-string braces: `punctuation.special` is fg; nvim shows the `{`
+--      and `}` of an interpolation purple from @odp.punctuation.special.python.
+--  10. Python decorator names: `function.decorator` (-> `function`) is blue;
+--      nvim shows the `@` blue from @odp.decorator.python but the name after
+--      it purple from @attribute, unless it is a builtin (`@property`) or a
+--      dotted call (`@a.b()`), which nvim shows blue as well.
+-- Deviations 8 to 10 were found by the sign-off kit (docs/sign-off.md), which
+-- also lists the Query Differences: tokens Zed's queries capture under a
+-- different name from nvim-treesitter's, which no Mapping value can reach.
 return {
   -- Style Keys, by Chrome Rule. A comment names the nvim Highlight Group a
   -- rule echoes where there is one.
@@ -281,7 +294,7 @@ return {
     { "function.method", "blue" }, -- @function.method
     { "string.special", "blue" }, -- @string.special -> Special
     { "link_text", "blue" }, -- @text.reference.markdown_inline (Markdown Filetype Override)
-    { "attribute", "blue" }, -- @odp.decorator.python -> @function, by the Filetype Override rule over @attribute purple
+    { "attribute", "blue" }, -- Zed emits it as attribute.builtin for @property, @classmethod and @staticmethod, which nvim links to Special, blue; other decorator names reach Zed as function.decorator (Deviation 10)
 
     -- cyan
     { "function.builtin", "cyan" }, -- @function.builtin.go, by the Filetype Override rule over @function.builtin yellow (Deviation 4)
