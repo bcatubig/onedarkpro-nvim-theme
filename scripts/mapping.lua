@@ -1,13 +1,14 @@
 -- The Mapping: which Palette colour fills each Style Key and Syntax Key.
 --
 -- Entry order here is the key order in the Theme Family, so keep it
--- deliberate. A value names a Palette colour ("purple"), or a table
--- { "purple", alpha = "33" } to append alpha. Syntax Key values may also
--- carry font_style ("italic") and font_weight (700); those are the only font
--- fields Zed reads. The build also accepts a literal "#rrggbb[aa]" so the
--- Palette-faithful check has teeth, but the committed Mapping must name
--- Palette colours: a literal is not a rule and does not carry across
--- Variants (ADR-0001).
+-- deliberate. An entry is { key, value }; the value names a Palette colour
+-- ("purple"), or is a table { "purple", alpha = "33" } to append alpha. A
+-- Syntax Key entry may also carry font_style = "italic" or font_weight = 700
+-- beside the value, as in { "title", "red", font_weight = 700 }; those are
+-- the only font fields Zed reads. The build also accepts a literal
+-- "#rrggbb[aa]" so the Palette-faithful check has teeth, but the committed
+-- Mapping must name Palette colours: a literal is not a rule and does not
+-- carry across Variants (ADR-0001).
 --
 -- Syntax Keys are copied from Upstream's Highlight Groups: the treesitter
 -- table first (highlights/plugins/treesitter.lua), then vim syntax groups
@@ -64,7 +65,7 @@ return {
     { "tag", "red" }, -- @tag
     { "string.special.symbol", "red" }, -- @string.special.symbol
     { "diff.minus", "red" }, -- removed lines in diffs; DiffDelete is a tint of red
-    { "title", "red", font_weight = 700 }, -- @text.title.markdown (Markdown override), bold
+    { "title", "red", font_weight = 700 }, -- @text.title.markdown (Markdown Filetype Override), bold
 
     -- yellow
     { "variable.special", "yellow" }, -- @variable.builtin (`self`, `this`)
@@ -73,21 +74,21 @@ return {
     { "constructor", "yellow" }, -- @constructor
     { "namespace", "yellow" }, -- @module
     { "enum", "yellow" }, -- @lsp.type.enum -> @type
-    { "punctuation.list_marker", "yellow" }, -- @markup.list.markdown (Markdown override)
+    { "punctuation.list_marker", "yellow" }, -- @markup.list.markdown (Markdown Filetype Override)
 
     -- purple
     { "keyword", "purple" }, -- Keyword, @keyword; every keyword.* sub-key inherits
     { "label", "purple" }, -- Label, @label
     { "punctuation.bracket", "purple" }, -- @punctuation.bracket (Deviations 1 and 6)
     { "constant.builtin", "purple" }, -- @constant.builtin (Deviation 5)
-    { "link_uri", "purple" }, -- @text.uri.markdown_inline (Markdown override)
-    { "emphasis", "purple", font_style = "italic" }, -- @markup.italic.markdown_inline (Markdown override), italic
+    { "link_uri", "purple" }, -- @text.uri.markdown_inline (Markdown Filetype Override)
+    { "emphasis", "purple", font_style = "italic" }, -- @markup.italic.markdown_inline (Markdown Filetype Override), italic
 
     -- blue
     { "function", "blue" }, -- Function, @function; function.call and function.decorator inherit
     { "function.method", "blue" }, -- @function.method
     { "string.special", "blue" }, -- @string.special -> Special
-    { "link_text", "blue" }, -- @text.reference.markdown_inline (Markdown override)
+    { "link_text", "blue" }, -- @text.reference.markdown_inline (Markdown Filetype Override)
     { "attribute", "blue" }, -- @odp.decorator.python -> @function, by the Filetype Override rule over @attribute purple
 
     -- cyan
@@ -100,27 +101,27 @@ return {
     -- green
     { "string", "green" }, -- String, @string
     { "string.regex", "green" }, -- @string.regex
-    { "text.literal", "green" }, -- @text.literal.markdown_inline (Markdown override)
+    { "text.literal", "green" }, -- @text.literal.markdown_inline (Markdown Filetype Override)
     { "diff.plus", "green" }, -- added lines in diffs; DiffAdd is a tint of green
 
     -- orange
     { "number", "orange" }, -- Number, @number
     { "boolean", "orange" }, -- Boolean, @boolean
     { "constant", "orange" }, -- Constant, @constant (Deviation 3)
-    { "emphasis.strong", "orange", font_weight = 700 }, -- @markup.strong.markdown_inline (Markdown override), bold
+    { "emphasis.strong", "orange", font_weight = 700 }, -- @markup.strong.markdown_inline (Markdown Filetype Override), bold
     { "selector", "orange" }, -- @odp.selector.scss
 
     -- comment
     { "comment", "comment" }, -- Comment, @comment
     { "comment.doc", "comment" }, -- @comment (Upstream has no documentation-comment group)
-    { "punctuation.markup", "comment" }, -- @punctuation.special.markdown (Markdown override)
+    { "punctuation.markup", "comment" }, -- @punctuation.special.markdown (Markdown Filetype Override)
     { "preproc", "comment" }, -- Zed's Go grammar captures `//go:` directives as preproc; nvim shows them as Comment
 
     -- fg
     { "punctuation", "fg" }, -- Delimiter
     { "punctuation.delimiter", "fg" }, -- @punctuation.delimiter -> Delimiter
     { "punctuation.special", "fg" }, -- @punctuation.special (`$` and `$(` in shell)
-    { "punctuation.embedded", "fg" }, -- @markup.raw.delimiter.markdown (Markdown override)
+    { "punctuation.embedded", "fg" }, -- @markup.raw.delimiter.markdown (Markdown Filetype Override): Zed emits this only for fenced-block fences and info strings; inline backticks are part of text.literal
     { "embedded", "fg" }, -- embedded code reads as plain text, as nvim shows it
     { "primary", "fg" }, -- Zed's catch-all for plain identifiers in some grammars
 

@@ -122,11 +122,10 @@ local function build_theme(palette)
     local key, spec = entry[1], entry[2]
     local syntax_style = json.object()
     syntax_style:set("color", colour_for("syntax." .. key, spec))
-    if entry.font_style ~= nil then
-      syntax_style:set("font_style", entry.font_style)
-    end
-    if entry.font_weight ~= nil then
-      syntax_style:set("font_weight", entry.font_weight)
+    for _, field in ipairs({ "font_style", "font_weight" }) do
+      if entry[field] ~= nil then
+        syntax_style:set(field, entry[field])
+      end
     end
     syntax:set(key, syntax_style)
   end

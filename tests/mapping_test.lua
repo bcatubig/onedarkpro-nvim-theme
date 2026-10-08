@@ -49,7 +49,7 @@ local GROUPS = {
 
 for _, group in ipairs(GROUPS) do
   local colour, hex, keys = group[1], group[2], group[3]
-  test(string.format("Syntax Keys Upstream colours %s are %s in OneDarkPro Onedark", colour, hex), function()
+  test(string.format("Syntax Keys mapped to Palette %s are Upstream's %s in OneDarkPro Onedark", colour, hex), function()
     local syntax = h.theme_family().themes[1].style.syntax
     for _, key in ipairs(keys) do
       local entry = syntax[key]
