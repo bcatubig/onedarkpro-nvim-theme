@@ -1,54 +1,57 @@
 -- The Syntax Key Mapping, observed through the built Theme. Expected values
--- are Upstream's onedark Palette literals from
--- upstream/lua/onedarkpro/themes/onedark.lua (and, for Derived Colours, the
--- committed palettes/onedark.json). Style Keys are checked in chrome_test.lua.
+-- are Upstream's Palette literals for each Variant (tests/variants.lua).
+-- Every assertion runs against every Theme the Theme Family ships. Style
+-- Keys are checked in chrome_test.lua.
 local h = require("helpers")
 
 -- The full Syntax Key Mapping of ticket #3, grouped by Palette colour:
--- { Palette colour, its onedark literal, the Syntax Keys it fills }.
+-- { Palette colour, the Syntax Keys it fills }.
 local GROUPS = {
-  { "red", "#e06c75", {
+  { "red", {
     "variable", "variable.parameter", "variable.member", "property", "tag",
     "string.special.symbol", "diff.minus", "title",
   } },
-  { "yellow", "#e5c07b", {
+  { "yellow", {
     "variable.special", "type", "type.builtin", "constructor", "namespace", "enum",
     "punctuation.list_marker",
   } },
-  { "purple", "#c678dd", {
+  { "purple", {
     "keyword", "label", "punctuation.bracket", "constant.builtin", "link_uri", "emphasis",
   } },
-  { "blue", "#61afef", {
+  { "blue", {
     "function", "function.method", "string.special", "link_text", "attribute",
   } },
-  { "cyan", "#56b6c2", {
+  { "cyan", {
     "function.builtin", "operator", "string.escape", "variant", "selector.pseudo",
   } },
-  { "green", "#98c379", {
+  { "green", {
     "string", "string.regex", "text.literal", "diff.plus",
   } },
-  { "orange", "#d19a66", {
+  { "orange", {
     "number", "boolean", "constant", "emphasis.strong", "selector",
   } },
-  { "comment", "#7f848e", {
+  { "comment", {
     "comment", "comment.doc", "punctuation.markup", "preproc",
   } },
-  { "fg", "#abb2bf", {
+  { "fg", {
     "punctuation", "punctuation.delimiter", "punctuation.special", "punctuation.embedded",
     "embedded", "primary",
   } },
-  { "inlay_hint", "#4c525c", { "hint" } },
-  { "gray", "#5c6370", { "predictive" } },
+  { "inlay_hint", { "hint" } },
+  { "gray", { "predictive" } },
 }
 
-for _, group in ipairs(GROUPS) do
-  local colour, hex, keys = group[1], group[2], group[3]
-  test(string.format("Syntax Keys mapped to Palette %s are Upstream's %s in OneDarkPro Onedark", colour, hex), function()
-    local syntax = h.theme_family().themes[1].style.syntax
-    for _, key in ipairs(keys) do
-      local entry = syntax[key]
-      assert(entry, "syntax." .. key .. " is missing from the Theme")
-      h.eq(entry.color, hex, "syntax." .. key .. " <- " .. colour)
-    end
-  end)
+for _, t in ipairs(h.THEMES) do
+  local literal = t.literal
+  for _, group in ipairs(GROUPS) do
+    local colour, keys = group[1], group[2]
+    test(string.format("Syntax Keys mapped to Palette %s are Upstream's %s in %s", colour, literal[colour], t.name), function()
+      local syntax = h.theme(t.name).style.syntax
+      for _, key in ipairs(keys) do
+        local entry = syntax[key]
+        assert(entry, "syntax." .. key .. " is missing from the Theme")
+        h.eq(entry.color, literal[colour], "syntax." .. key .. " <- " .. colour)
+      end
+    end)
+  end
 end

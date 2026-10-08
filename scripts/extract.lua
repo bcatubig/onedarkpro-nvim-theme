@@ -3,11 +3,11 @@
 -- Runs Upstream (olimorris/onedarkpro.nvim, the git submodule under upstream/)
 -- inside this headless nvim and asks it for a Variant's Palette: the base
 -- colours and every Derived Colour, exactly as nvim computes them, and the
--- Bright Colours, exactly as Upstream's terminal exports compute them. No
--- colour maths is reimplemented here; see ADR-0002. The result is written to
--- palettes/<variant>.json.
+-- Bright Colours, as Upstream's terminal exports compute them plus the
+-- lightened fg they meant to (ADR-0003). No colour maths is reimplemented
+-- here; see ADR-0002. The result is written to palettes/<variant>.json.
 --
---   nvim --clean -l scripts/extract.lua [variant ...]     (default: onedark)
+--   nvim --clean -l scripts/extract.lua [variant ...]     (default: every Variant in VARIANTS)
 
 local root = vim.fs.dirname(vim.fs.dirname(vim.fn.fnamemodify(debug.getinfo(1, "S").source:sub(2), ":p")))
 package.path = root .. "/scripts/?.lua;" .. package.path
@@ -62,10 +62,12 @@ end
 -- in upstream/lua/onedarkpro/extra/init.lua. That function is local to
 -- Upstream's extra module, so its recipe, the colours and the amount, is
 -- repeated here as calls to Upstream's own `lighten`; the terminal oracle
--- test catches any drift from Upstream's export (ADR-0003). Its `bright_fg`,
--- which lightens yellow, is a typo in Upstream and is not emitted. Listed in
--- the order of the base colours.
-local BRIGHT_FROM = { "red", "orange", "yellow", "green", "cyan", "blue", "purple", "white", "black", "gray" }
+-- test catches any drift from Upstream's export (ADR-0003). Listed in the
+-- order of the base colours, then `fg`: Upstream's `bright_fg` lightens
+-- yellow by a typo, so the lightened `fg` it meant is computed here and the
+-- typo'd value is not emitted. In onedark `white` equals `fg` and the two
+-- coincide; in onelight `fg` is the dark colour and `white` the light one.
+local BRIGHT_FROM = { "red", "orange", "yellow", "green", "cyan", "blue", "purple", "white", "black", "gray", "fg" }
 local BRIGHT_AMOUNT = 10
 
 local function bright_colours(variant)
@@ -97,7 +99,15 @@ local function extract(variant)
   print("extracted " .. variant .. " -> " .. (vim.fs.relpath(root, path) or path))
 end
 
-local variants = #arg > 0 and arg or { "onedark" }
+-- The Variants this extension ships, one Theme each. To add a Variant
+-- (onedark_vivid, onedark_dark, vaporwave): add its name here and run make,
+-- which writes its Palette file and builds its Theme from every committed
+-- Palette file by the same Mapping; then give the tests its Upstream
+-- literals in tests/variants.lua and its Theme name in tests/shape_test.lua.
+-- No rule or Mapping changes.
+local VARIANTS = { "onedark", "onelight" }
+
+local variants = #arg > 0 and arg or VARIANTS
 for _, variant in ipairs(variants) do
   extract(variant)
 end

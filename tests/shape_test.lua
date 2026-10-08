@@ -8,11 +8,13 @@ test("Theme Family is named OneDarkPro and declares Zed's v0.2.0 theme schema", 
   h.eq(family["$schema"], "https://zed.dev/schema/themes/v0.2.0.json", "schema")
 end)
 
-test("Theme Family holds one Theme, OneDarkPro Onedark, with dark appearance", function()
+test("Theme Family holds exactly two Themes: OneDarkPro Onedark (dark) then OneDarkPro Onelight (light)", function()
   local family = h.theme_family()
-  h.eq(#family.themes, 1, "number of Themes")
-  h.eq(family.themes[1].name, "OneDarkPro Onedark", "Theme name")
-  h.eq(family.themes[1].appearance, "dark", "appearance")
+  h.eq(#family.themes, 2, "number of Themes")
+  h.eq(family.themes[1].name, "OneDarkPro Onedark", "themes[0].name")
+  h.eq(family.themes[1].appearance, "dark", "themes[0].appearance")
+  h.eq(family.themes[2].name, "OneDarkPro Onelight", "themes[1].name")
+  h.eq(family.themes[2].appearance, "light", "themes[1].appearance")
 end)
 
 test("every colour in the Theme Family is well-formed hex, #rrggbb or #rrggbbaa", function()
