@@ -129,6 +129,16 @@ local ALPHA = {
   ["ignored.background"] = "#5c637026", ["ignored.border"] = "#5c637080",
   ["hidden.background"] = "#5c637026", ["hidden.border"] = "#5c637080",
   ["unreachable.background"] = "#5c637026", ["unreachable.border"] = "#5c637080",
+  -- Terminal: the dim colours and the dim foreground at 60% of their normal colour
+  ["terminal.ansi.dim_black"] = "#282c3499",
+  ["terminal.ansi.dim_red"] = "#e06c7599",
+  ["terminal.ansi.dim_green"] = "#98c37999",
+  ["terminal.ansi.dim_yellow"] = "#e5c07b99",
+  ["terminal.ansi.dim_blue"] = "#61afef99",
+  ["terminal.ansi.dim_magenta"] = "#c678dd99",
+  ["terminal.ansi.dim_cyan"] = "#56b6c299",
+  ["terminal.ansi.dim_white"] = "#abb2bf99",
+  ["terminal.dim_foreground"] = "#abb2bf99",
 }
 
 test("alpha-granted Style Keys carry their stated tint in OneDarkPro Onedark", function()

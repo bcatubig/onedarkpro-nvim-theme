@@ -4,7 +4,7 @@ local h = require("helpers")
 
 local function colour_set(palette)
   local set = {}
-  for _, group in ipairs({ palette.base, palette.derived }) do
+  for _, group in ipairs({ palette.base, palette.derived, palette.bright }) do
     for _, colour in pairs(group) do
       set[colour:lower()] = true
     end

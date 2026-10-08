@@ -65,6 +65,7 @@ return {
     { "Editor surface", "bg", { -- Normal
       "background", "editor.background", "editor.gutter.background", "surface.background",
       "panel.background", "toolbar.background", "tab.active_background", "terminal.background",
+      "terminal.ansi.background",
     } },
     { "Statusline surface", "bg_statusline", { -- StatusLine
       "status_bar.background", "title_bar.background", "title_bar.inactive_background",
@@ -184,6 +185,46 @@ return {
       "vim.visual_line.foreground", "vim.visual_block.foreground", "vim.helix_normal.foreground",
       "vim.helix_select.foreground",
     } },
+
+    -- Terminal, slot for slot as Upstream's ghostty, kitty and wezterm
+    -- exports fill it (upstream/lua/onedarkpro/extra/ghostty.lua and its
+    -- siblings): black and white are the Palette's `black` and `white`,
+    -- magenta is purple, bright black is gray and the other bright colours
+    -- are the Bright Colours. The export's background and foreground, bg and
+    -- fg, fill terminal.background, terminal.ansi.background (Zed's colour
+    -- for a cell on the default background) and terminal.foreground above,
+    -- by "Editor surface" and "Text".
+    { "ANSI black", "black", { "terminal.ansi.black" } },
+    { "ANSI red", "red", { "terminal.ansi.red" } },
+    { "ANSI green", "green", { "terminal.ansi.green" } },
+    { "ANSI yellow", "yellow", { "terminal.ansi.yellow" } },
+    { "ANSI blue", "blue", { "terminal.ansi.blue" } },
+    { "ANSI magenta", "purple", { "terminal.ansi.magenta" } },
+    { "ANSI cyan", "cyan", { "terminal.ansi.cyan" } },
+    { "ANSI white", "white", { "terminal.ansi.white" } },
+    { "ANSI bright black", "gray", { "terminal.ansi.bright_black" } },
+    { "ANSI bright red", "bright_red", { "terminal.ansi.bright_red" } },
+    { "ANSI bright green", "bright_green", { "terminal.ansi.bright_green" } },
+    { "ANSI bright yellow", "bright_yellow", { "terminal.ansi.bright_yellow" } },
+    { "ANSI bright blue", "bright_blue", { "terminal.ansi.bright_blue" } },
+    { "ANSI bright magenta", "bright_purple", { "terminal.ansi.bright_magenta" } },
+    { "ANSI bright cyan", "bright_cyan", { "terminal.ansi.bright_cyan" } },
+    { "ANSI bright white", "bright_white", { "terminal.ansi.bright_white" } },
+    -- The lightened fg (white equals fg in onedark). Upstream's exports have
+    -- no bright foreground of their own: the `bright_fg` its helper computes
+    -- lightens yellow by mistake and only the rio export reads it.
+    { "Bright foreground", "bright_white", { "terminal.bright_foreground" } },
+    -- Dim: the normal colour at 60%, where the exports darken by 10, so that
+    -- faint text fades without a colour outside the Palette (ADR-0001).
+    { "ANSI dim black", { "black", alpha = "99" }, { "terminal.ansi.dim_black" } },
+    { "ANSI dim red", { "red", alpha = "99" }, { "terminal.ansi.dim_red" } },
+    { "ANSI dim green", { "green", alpha = "99" }, { "terminal.ansi.dim_green" } },
+    { "ANSI dim yellow", { "yellow", alpha = "99" }, { "terminal.ansi.dim_yellow" } },
+    { "ANSI dim blue", { "blue", alpha = "99" }, { "terminal.ansi.dim_blue" } },
+    { "ANSI dim magenta", { "purple", alpha = "99" }, { "terminal.ansi.dim_magenta" } },
+    { "ANSI dim cyan", { "cyan", alpha = "99" }, { "terminal.ansi.dim_cyan" } },
+    { "ANSI dim white", { "white", alpha = "99" }, { "terminal.ansi.dim_white" } },
+    { "Dim foreground", { "fg", alpha = "99" }, { "terminal.dim_foreground" } },
   },
 
   -- Players: Zed's collaborator colours. Player one is the user: cursor and
