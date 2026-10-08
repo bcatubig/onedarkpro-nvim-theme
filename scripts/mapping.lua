@@ -1,14 +1,24 @@
 -- The Mapping: which Palette colour fills each Style Key and Syntax Key.
 --
 -- Entry order here is the key order in the Theme Family, so keep it
--- deliberate. An entry is { key, value }; the value names a Palette colour
--- ("purple"), or is a table { "purple", alpha = "33" } to append alpha. A
--- Syntax Key entry may also carry font_style = "italic" or font_weight = 700
--- beside the value, as in { "title", "red", font_weight = 700 }; those are
--- the only font fields Zed reads. The build also accepts a literal
--- "#rrggbb[aa]" so the Palette-faithful check has teeth, but the committed
--- Mapping must name Palette colours: a literal is not a rule and does not
--- carry across Variants (ADR-0001).
+-- deliberate. A value names a Palette colour ("purple"), or is a table
+-- { "purple", alpha = "33" } to append alpha. The build also accepts a
+-- literal "#rrggbb[aa]" so the Palette-faithful check has teeth, but the
+-- committed Mapping must name Palette colours: a literal is not a rule and
+-- does not carry across Variants (ADR-0001).
+--
+-- Style Keys are filled by the Chrome rules of spec #1. A Chrome rule is
+-- { name, value, { Style Keys... } }: every key in the rule takes the one
+-- value, so a rule reads here as it was written and applies unchanged to any
+-- Variant's Palette. A Style Key may appear in one rule only. `players` and
+-- `accents`, Zed's two array-valued Style Keys, have their own sections;
+-- `background.appearance` is a constant of the build ("opaque", Upstream's
+-- transparency = false).
+--
+-- A Syntax Key entry is { key, value }; it may also carry font_style =
+-- "italic" or font_weight = 700 beside the value, as in
+-- { "title", "red", font_weight = 700 }; those are the only font fields Zed
+-- reads.
 --
 -- Syntax Keys are copied from Upstream's Highlight Groups: the treesitter
 -- table first (highlights/plugins/treesitter.lua), then vim syntax groups
@@ -48,12 +58,151 @@
 --      @odp.brackets.json.
 --   7. TOML keys: `property` is red; nvim shows purple from @property.toml.
 return {
-  -- Style Keys: the editor surface.
+  -- Style Keys, by Chrome rule. A comment names the nvim Highlight Group a
+  -- rule echoes where there is one.
   style = {
-    { "background", "bg" },
-    { "editor.background", "bg" },
-    { "editor.foreground", "fg" },
+    -- Surfaces
+    { "Editor surface", "bg", { -- Normal
+      "background", "editor.background", "editor.gutter.background", "surface.background",
+      "panel.background", "toolbar.background", "tab.active_background", "terminal.background",
+    } },
+    { "Statusline surface", "bg_statusline", { -- StatusLine
+      "status_bar.background", "title_bar.background", "title_bar.inactive_background",
+      "tab_bar.background", "tab.inactive_background", "editor.subheader.background",
+      "element.background",
+    } },
+    { "Floating surface", "float_bg", { "elevated_surface.background", "panel.overlay_background" } }, -- NormalFloat
+    { "Current line", "cursorline", { -- CursorLine; the hovered row of a menu, as Pmenu
+      "editor.active_line.background", "element.hover", "ghost_element.hover", "panel.overlay_hover",
+    } },
+    { "Selection", "selection", { -- Visual, PmenuSel; player one's selection is in `players`
+      "element.selected", "element.active", "ghost_element.selected", "ghost_element.active",
+      "element.selection_background", "editor.document_highlight.read_background",
+      "editor.document_highlight.write_background", "editor.document_highlight.bracket_background",
+    } },
+
+    -- Accents
+    { "Cursor and focus accent", "purple", { -- Cursor, CursorLineNr; player one's cursor is in `players`
+      "editor.active_line_number", "border.focused", "border.selected", "panel.focused_border",
+      "pane.focused_border", "drop_target.border", "debugger.accent",
+    } },
+    { "Link accent", "blue", { -- Directory
+      "text.accent", "icon.accent", "link_text.hover", "editor.indent_guide_active",
+      "panel.indent_guide_active",
+    } },
+
+    -- Borders
+    { "Pane splits", "gray", { "pane_group.border" } }, -- WinSeparator
+    { "Quiet borders", "fg_gutter", { "border", "border.variant", "border.disabled", "scrollbar.track.border" } },
+    { "Transparent", { "bg", alpha = "00" }, { -- bg at 0%: the only transparent colour in the Palette
+      "border.transparent", "ghost_element.background", "ghost_element.disabled", "element.disabled",
+      "scrollbar.track.background", "scrollbar.thumb.border", "minimap.thumb.border",
+    } },
+
+    -- Text
+    { "Text", "fg", { "text", "icon", "editor.foreground", "editor.hover_line_number", "terminal.foreground" } }, -- Normal
+    { "Muted", "comment", { "text.muted", "icon.muted", "editor.code_lens.foreground" } }, -- Comment
+    { "Faint", "gray", { -- NonText
+      "text.placeholder", "text.disabled", "icon.placeholder", "icon.disabled", "editor.invisible",
+      "panel.indent_guide",
+    } },
+
+    -- Editor furniture
+    { "Gutter", "line_number", { "editor.line_number" } }, -- LineNr
+    { "Guides", "indentline", { -- IndentLine (snacks indent)
+      "editor.indent_guide", "editor.wrap_guide", "editor.active_wrap_guide", "panel.indent_guide_hover",
+    } },
+    { "Line flash", "fold", { "editor.highlighted_line.background" } }, -- Folded
+    { "Debugger active line", "diff_change", { "editor.debugger_active_line.background" } }, -- DiffChange
+
+    -- Tints
+    { "Search match", { "highlight", alpha = "4d" }, { "search.match_background" } }, -- Search, as hlslens
+    { "Search active match", { "highlight", alpha = "8c" }, { "search.active_match_background" } }, -- CurSearch
+    { "Thumbs", { "gray", alpha = "66" }, { "scrollbar.thumb.background", "minimap.thumb.background" } },
+    { "Thumbs hovered", { "gray", alpha = "99" }, { "scrollbar.thumb.hover_background", "minimap.thumb.hover_background" } },
+    { "Thumbs active", { "gray", alpha = "cc" }, { "scrollbar.thumb.active_background", "minimap.thumb.active_background" } },
+    { "Drop target", { "selection", alpha = "80" }, { "drop_target.background" } },
+
+    -- Diagnostics and status: the colour, then its 15% tint behind and its
+    -- 50% border. Diagnostic* in nvim.
+    { "Error", "red", { "error" } },
+    { "Error tint", { "red", alpha = "26" }, { "error.background" } },
+    { "Error border", { "red", alpha = "80" }, { "error.border" } },
+    { "Warning", "yellow", { "warning" } },
+    { "Warning tint", { "yellow", alpha = "26" }, { "warning.background" } },
+    { "Warning border", { "yellow", alpha = "80" }, { "warning.border" } },
+    { "Info", "blue", { "info" } },
+    { "Info tint", { "blue", alpha = "26" }, { "info.background" } },
+    { "Info border", { "blue", alpha = "80" }, { "info.border" } },
+    { "Hint", "cyan", { "hint" } },
+    { "Hint tint", { "cyan", alpha = "26" }, { "hint.background" } },
+    { "Hint border", { "cyan", alpha = "80" }, { "hint.border" } },
+    { "Success", "green", { "success" } },
+    { "Success tint", { "green", alpha = "26" }, { "success.background" } },
+    { "Success border", { "green", alpha = "80" }, { "success.border" } },
+    { "Predictive", "gray", { "predictive" } },
+    { "Predictive tint", { "gray", alpha = "26" }, { "predictive.background" } },
+    { "Predictive border", { "gray", alpha = "80" }, { "predictive.border" } },
+
+    -- File status, version control and diff hunks, as neo-tree, gitsigns and
+    -- diffview show them. Added, modified and deleted files are tinted with
+    -- the diff colours and bordered with the git colours; the other statuses
+    -- take the Diagnostics pattern so that no status key is left to Zed.
+    { "Added", "green", { "created", "version_control.added", "editor.diff_hunk.added.hollow_border" } }, -- GitSignsAdd
+    { "Added tint", "diff_add", { -- DiffAdd
+      "created.background", "editor.diff_hunk.added.background", "editor.diff_hunk.added.hollow_background",
+      "version_control.conflict_marker.ours",
+    } },
+    { "Added border", "git_add", { "created.border" } },
+    { "Modified", "yellow", { "modified", "version_control.modified" } }, -- GitSignsChange
+    { "Modified tint", "diff_change", { "modified.background" } }, -- DiffChange
+    { "Modified border", "git_change", { "modified.border" } },
+    { "Deleted", "red", { "deleted", "version_control.deleted", "editor.diff_hunk.deleted.hollow_border" } }, -- GitSignsDelete
+    { "Deleted tint", "diff_delete", { -- DiffDelete
+      "deleted.background", "editor.diff_hunk.deleted.background", "editor.diff_hunk.deleted.hollow_background",
+    } },
+    { "Deleted border", "git_delete", { "deleted.border" } },
+    { "Renamed and conflict", "blue", { "renamed", "version_control.renamed", "conflict", "version_control.conflict" } }, -- NeoTreeGitRenamed, NeoTreeGitConflict
+    { "Renamed and conflict tint", { "blue", alpha = "26" }, { "renamed.background", "conflict.background" } },
+    { "Renamed and conflict border", { "blue", alpha = "80" }, { "renamed.border", "conflict.border" } },
+    { "Ignored", "gray", { "ignored", "hidden", "unreachable", "version_control.ignored" } }, -- NeoTreeGitIgnored, NeoTreeDotfile
+    { "Ignored tint", { "gray", alpha = "26" }, { "ignored.background", "hidden.background", "unreachable.background" } },
+    { "Ignored border", { "gray", alpha = "80" }, { "ignored.border", "hidden.border", "unreachable.border" } },
+    { "Changed text", "diff_text", { "version_control.word_added", "version_control.conflict_marker.theirs" } }, -- DiffText
+    { "Deleted text", "diff_text_delete", { "version_control.word_deleted" } },
+
+    -- Vim mode indicator, as lualine's mode section: the mode colour behind
+    -- text in bg.
+    { "Vim normal", "green", { "vim.normal.background" } },
+    { "Vim insert", "blue", { "vim.insert.background" } },
+    { "Vim visual", "yellow", { "vim.visual.background", "vim.visual_line.background", "vim.visual_block.background", "vim.yank.background" } },
+    { "Vim replace", "red", { "vim.replace.background" } },
+    { "Helix", "purple", { "vim.helix_normal.background", "vim.helix_select.background" } },
+    { "Helix jump label", "red", { "vim.helix_jump_label.foreground" } },
+    { "Vim mode text", "bg", {
+      "vim.normal.foreground", "vim.insert.foreground", "vim.replace.foreground", "vim.visual.foreground",
+      "vim.visual_line.foreground", "vim.visual_block.foreground", "vim.helix_normal.foreground",
+      "vim.helix_select.foreground",
+    } },
   },
+
+  -- Players: Zed's collaborator colours. Player one is the user: cursor and
+  -- background purple (Cursor), selection as Visual. Players two to eight
+  -- cycle Upstream's accent colours with the selection at 25%.
+  players = {
+    { cursor = "purple", background = "purple", selection = "selection" },
+    { cursor = "blue", background = "blue", selection = { "blue", alpha = "40" } },
+    { cursor = "green", background = "green", selection = { "green", alpha = "40" } },
+    { cursor = "yellow", background = "yellow", selection = { "yellow", alpha = "40" } },
+    { cursor = "red", background = "red", selection = { "red", alpha = "40" } },
+    { cursor = "cyan", background = "cyan", selection = { "cyan", alpha = "40" } },
+    { cursor = "orange", background = "orange", selection = { "orange", alpha = "40" } },
+    { cursor = "gray", background = "gray", selection = { "gray", alpha = "40" } },
+  },
+
+  -- Accents: rainbow brackets, in the order of Upstream's RainbowDelimiter
+  -- groups (highlights/plugins/rainbow_delimiters.lua).
+  accents = { "red", "yellow", "blue", "orange", "green", "purple", "cyan" },
 
   -- Syntax Keys, grouped by Palette colour.
   syntax = {

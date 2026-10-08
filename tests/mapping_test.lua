@@ -1,14 +1,8 @@
--- The Mapping, observed through the built Theme. Expected values are
--- Upstream's onedark Palette literals from upstream/lua/onedarkpro/themes/onedark.lua
--- (and, for Derived Colours, the committed palettes/onedark.json).
+-- The Syntax Key Mapping, observed through the built Theme. Expected values
+-- are Upstream's onedark Palette literals from
+-- upstream/lua/onedarkpro/themes/onedark.lua (and, for Derived Colours, the
+-- committed palettes/onedark.json). Style Keys are checked in chrome_test.lua.
 local h = require("helpers")
-
-test("walking-skeleton Mapping fills the editor surface with Upstream's bg and fg", function()
-  local style = h.theme_family().themes[1].style
-  h.eq(style["background"], "#282c34", "background <- bg")
-  h.eq(style["editor.background"], "#282c34", "editor.background <- bg")
-  h.eq(style["editor.foreground"], "#abb2bf", "editor.foreground <- fg")
-end)
 
 -- The full Syntax Key Mapping of ticket #3, grouped by Palette colour:
 -- { Palette colour, its onedark literal, the Syntax Keys it fills }.

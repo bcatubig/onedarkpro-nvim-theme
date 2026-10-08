@@ -62,6 +62,10 @@ _Avoid_: UI, non-editor colours
 The table assigning a Palette colour to each Syntax Key and Style Key. For Syntax Keys it is copied from Upstream's Highlight Groups. For Chrome it is this project's own.
 _Avoid_: colour assignments, overrides
 
+**Chrome Rule**:
+A named entry in the Mapping that fills a list of Style Keys with one Palette colour, with alpha where the rule grants it. The unit in which Style Keys are specified, so the same rule fills every Variant.
+_Avoid_: rule group, colour group, style group
+
 **Palette-faithful**:
 The invariant that every colour in a Theme is a Palette colour of its Variant, with alpha permitted. No colour appears in a Theme that does not appear in the Palette.
 _Avoid_: pixel-faithful, exact match

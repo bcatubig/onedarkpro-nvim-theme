@@ -29,7 +29,7 @@ test("build fails, naming the key and the colour, when the Mapping introduces a 
   local f = assert(io.open(mapping, "w"))
   f:write([[
 return {
-  style = { { "editor.background", "bg" } },
+  style = { { "Editor surface", "bg", { "editor.background" } } },
   syntax = { { "keyword", "#ff0000" } },
 }
 ]])
