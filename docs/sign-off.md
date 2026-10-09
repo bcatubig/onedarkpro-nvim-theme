@@ -23,7 +23,7 @@ Expected colours are given as Palette colour names; the hex values for both Vari
 
 **Reading the tables.** Each row is a token class the Mapping colours: what to look at in the sample, the expected colour, and the Zed Syntax Key and nvim group behind it. "Deviation n" points at the numbered list in the README and in the header of `scripts/mapping.lua`. "Query Difference" marks a token Zed's query captures under a different name from nvim-treesitter's, or not at all, so the Mapping cannot reach it; expect the two colours given.
 
-The expectations below were derived by rendering each sample twice under headless nvim: once with Upstream and the nvim-treesitter queries installed on this machine (nvim-treesitter `main` at f603a2f, the queries your `:TSInstall` placed in `site/queries`), and once with Zed 1.23.2's own highlight queries (built-in Go, Python, Bash, YAML and Markdown; the Terraform extension's) resolved through the built Theme by Zed's rules. Your eyes are the final check; the derivation only says where to look.
+The expectations below were derived by rendering each sample twice under headless nvim: once with Upstream and the nvim-treesitter queries installed on this machine (nvim-treesitter `main` at f603a2f, the queries your `:TSInstall` placed in `site/queries`), and once with Zed 1.23.2's own highlight queries (built-in Go, Python, Bash, YAML and Markdown; the Terraform extension's) resolved through the built Theme by Zed's rules. The script is `scripts/dev/oracle.lua`; its header says how to run it on a sample. Your eyes are the final check; the derivation only says where to look.
 
 ---
 

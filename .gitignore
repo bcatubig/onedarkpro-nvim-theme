@@ -1,0 +1,2 @@
+# Zed highlight queries the sign-off oracle fetches on first run (scripts/dev/oracle.lua)
+scripts/dev/.zed-queries/
