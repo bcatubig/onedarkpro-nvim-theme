@@ -4,6 +4,8 @@ All notable changes to this extension. The format follows [Keep a Changelog](htt
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-10-09
+
 ### Added
 
 - **OneDarkPro Onedark Dark**, **OneDarkPro Onedark Vivid** and **OneDarkPro Vaporwave** themes, all dark, built from the plugin's three remaining colourschemes by the same rules as the first two. On Onedark Dark's black background the plugin's own derived colours put popups and pickers flush with the editor, edged by a hairline border, and lift the status bar, tab bar and panels a shade above the editor instead of below it. ([#24](https://github.com/bcatubig/onedarkpro-nvim-theme/pull/24))
@@ -26,6 +28,7 @@ First release, generated from [onedarkpro.nvim](https://github.com/olimorris/one
 - Terminal colours matching the plugin's ghostty, kitty and wezterm exports slot for slot.
 - Known differences from nvim listed in `docs/sign-off.md`, with sample files for comparing the two editors.
 
-[Unreleased]: https://github.com/bcatubig/onedarkpro-nvim-theme/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/bcatubig/onedarkpro-nvim-theme/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/bcatubig/onedarkpro-nvim-theme/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/bcatubig/onedarkpro-nvim-theme/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/bcatubig/onedarkpro-nvim-theme/releases/tag/v0.1.0
