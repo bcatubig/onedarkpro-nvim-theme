@@ -61,4 +61,4 @@ onedarkpro.nvim also ships `onedark_vivid`, `onedark_dark` and `vaporwave`. Add 
 
 ## Licence
 
-MIT. The colours and syntax mapping are from [onedarkpro.nvim](https://github.com/olimorris/onedarkpro.nvim) by Oli Morris, also MIT. Design decisions are recorded in [docs/adr](docs/adr); the project's vocabulary in [CONTEXT.md](CONTEXT.md).
+MIT. The colours and syntax mapping are from [onedarkpro.nvim](https://github.com/olimorris/onedarkpro.nvim) by Oli Morris, also MIT. Design decisions are recorded in [docs/adr](docs/adr); the project's vocabulary in [CONTEXT.md](CONTEXT.md); changes between releases in [CHANGELOG.md](CHANGELOG.md).
