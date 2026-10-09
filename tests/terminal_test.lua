@@ -18,18 +18,21 @@ local ANSI_KEYS_BY_SLOT = {
 }
 
 -- Upstream's ghostty export for a Variant: `palette[0..15]` from its
--- `palette = N=#rrggbb` lines, plus `background` and `foreground`.
+-- `palette = N=#rrggbb` lines, plus `background` and `foreground`. The
+-- comparison is case-insensitive: Upstream spells vaporwave's base colours
+-- in uppercase and its export keeps that spelling, while the Theme Family
+-- is lowercase throughout, so the export's colours are lowercased here.
 local function ghostty_export(variant)
   local text = h.read(h.root .. "/upstream/extras/ghostty/onedarkpro_" .. variant)
   local export = { palette = {} }
   for line in text:gmatch("[^\n]+") do
     local slot, colour = line:match("^palette = (%d+)=(#%x%x%x%x%x%x)$")
     if slot then
-      export.palette[tonumber(slot)] = colour
+      export.palette[tonumber(slot)] = colour:lower()
     else
       local key, value = line:match("^([%a-]+) = (#%x%x%x%x%x%x)$")
       if key then
-        export[key] = value
+        export[key] = value:lower()
       end
     end
   end
@@ -41,10 +44,11 @@ local NORMAL = { "black", "red", "green", "yellow", "blue", "magenta", "cyan", "
 
 -- The bright foreground is Upstream's `fg` lightened by 10, the Bright Colour
 -- its exports meant to compute (their `bright_fg` lightens yellow by mistake,
--- so the export is no oracle for it). In onedark `white` equals `fg`, so it
--- is the export's bright white, palette 15. In onelight `black` equals `fg`,
--- so it is the lightened #6a6a6a, #848484, and not the export's bright white
--- #ffffff, which would be white text on a #fafafa terminal.
+-- so the export is no oracle for it). In the four dark Variants `white`
+-- equals `fg`, so it is the export's bright white, palette 15; onedark
+-- stands for them below. In onelight `black` equals `fg`, so it is the
+-- lightened #6a6a6a, #848484, and not the export's bright white #ffffff,
+-- which would be white text on a #fafafa terminal.
 
 for _, t in ipairs(h.THEMES) do
   test(string.format("the sixteen ANSI colours of %s equal, slot for slot, Upstream's ghostty export for %s", t.name, t.variant), function()

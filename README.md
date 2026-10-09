@@ -1,6 +1,6 @@
 # OneDarkPro for Zed
 
-The [onedarkpro.nvim](https://github.com/olimorris/onedarkpro.nvim) colours as a Zed theme: **OneDarkPro Onedark** and **OneDarkPro Onelight**.
+The [onedarkpro.nvim](https://github.com/olimorris/onedarkpro.nvim) colours as a Zed theme, five themes in all: **OneDarkPro Onedark**, **OneDarkPro Onedark Dark**, **OneDarkPro Onedark Vivid** and **OneDarkPro Vaporwave**, which are dark, and **OneDarkPro Onelight**, which is light.
 
 The themes are generated from the plugin's own palette and highlight definitions. Syntax colours copy its treesitter groups; UI colours that nvim has no equivalent for are filled from the same palette by fixed rules. Every colour in the theme exists in the palette, and the build fails otherwise.
 
@@ -54,10 +54,6 @@ Zed has no per-language colours. Where onedarkpro.nvim overrides a highlight gro
 9. Python f-string braces are foreground (nvim: purple)
 
 Other differences come from Zed's grammars capturing tokens differently from nvim-treesitter. They are listed per language in [docs/sign-off.md](docs/sign-off.md), along with sample files for comparing the two editors.
-
-## Adding a variant
-
-onedarkpro.nvim also ships `onedark_vivid`, `onedark_dark` and `vaporwave`. Add the name to `VARIANTS` in `scripts/extract.lua`, run `make`, and add the variant's expected values to `tests/variants.lua`.
 
 ## Licence
 
