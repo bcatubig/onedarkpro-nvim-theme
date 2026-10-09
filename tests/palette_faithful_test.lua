@@ -17,7 +17,7 @@ for _, t in ipairs(h.THEMES) do
     local count = 0
     h.each_colour(h.palette(t.variant), function(path, colour)
       count = count + 1
-      assert(colour:match("^#[%da-f][%da-f][%da-f][%da-f][%da-f][%da-f]$"),
+      assert(colour:match("^#[%da-f]+$") and #colour == 7,
         path .. " = " .. colour .. " is not lowercase #rrggbb")
     end)
     assert(count > 0, "no colours found in the Palette")

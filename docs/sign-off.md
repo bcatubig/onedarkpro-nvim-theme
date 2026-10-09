@@ -2,7 +2,7 @@
 
 The visual criterion that closes spec #1: the same six files, open side by side in nvim and in Zed, show the same colours, both Variants, apart from the Deviations and Query Differences listed here. Anything else that differs is a finding: file an issue naming the sample line and the Syntax Key or Style Key.
 
-Expected colours are given as Palette colour names; the hex values for both Variants are in the [Palette reference](#palette-reference) at the end. An expectation holds for both Variants unless it says otherwise. The checklist applies unchanged to the other three Variants, Onedark Dark, Onedark Vivid and Vaporwave, whose Palettes are in `palettes/`.
+Expected colours are given as Palette colour names; the hex values for both Variants are in the [Palette reference](#palette-reference) at the end. An expectation holds for both Variants unless it says otherwise. The checklist applies unchanged to the other three Variants, `onedark_dark`, `onedark_vivid` and `vaporwave`, whose Palettes are in `palettes/`.
 
 ## Setup
 

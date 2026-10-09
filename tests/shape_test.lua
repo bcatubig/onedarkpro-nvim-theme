@@ -11,19 +11,19 @@ end)
 -- The Themes the Theme Family ships, in Theme order: Palette filename order,
 -- which sorts the Variant names.
 local THEMES_IN_ORDER = {
-  { "OneDarkPro Onedark", "dark" },
-  { "OneDarkPro Onedark Dark", "dark" },
-  { "OneDarkPro Onedark Vivid", "dark" },
-  { "OneDarkPro Onelight", "light" },
-  { "OneDarkPro Vaporwave", "dark" },
+  { name = "OneDarkPro Onedark", appearance = "dark" },
+  { name = "OneDarkPro Onedark Dark", appearance = "dark" },
+  { name = "OneDarkPro Onedark Vivid", appearance = "dark" },
+  { name = "OneDarkPro Onelight", appearance = "light" },
+  { name = "OneDarkPro Vaporwave", appearance = "dark" },
 }
 
 test("Theme Family holds exactly five Themes in Palette filename order: Onedark, Onedark Dark, Onedark Vivid, Onelight, Vaporwave; only Onelight is light", function()
   local family = h.theme_family()
   h.eq(#family.themes, #THEMES_IN_ORDER, "number of Themes")
   for i, expected in ipairs(THEMES_IN_ORDER) do
-    h.eq(family.themes[i].name, expected[1], string.format("themes[%d].name", i - 1))
-    h.eq(family.themes[i].appearance, expected[2], string.format("themes[%d].appearance", i - 1))
+    h.eq(family.themes[i].name, expected.name, string.format("themes[%d].name", i - 1))
+    h.eq(family.themes[i].appearance, expected.appearance, string.format("themes[%d].appearance", i - 1))
   end
 end)
 

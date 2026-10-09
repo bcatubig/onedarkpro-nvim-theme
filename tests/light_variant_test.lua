@@ -3,7 +3,8 @@
 -- Onelight's current line, floating surfaces and statusline a shade darker
 -- than its #fafafa editor. Where onedark lightens (its cursorline sits above
 -- bg) onelight darkens, so the current line is the inversion the rules must
--- survive; float_bg and bg_statusline are darkened in both Variants.
+-- survive; float_bg and bg_statusline are darkened in both of these two
+-- Variants (not in every Variant: onedark_dark's float_bg equals its bg).
 -- Observed through the built Theme.
 local h = require("helpers")
 
