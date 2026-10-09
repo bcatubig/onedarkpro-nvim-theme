@@ -126,7 +126,8 @@ local ALPHA = {
   ["unreachable.background"] = { "gray", alpha = "26" }, ["unreachable.border"] = { "gray", alpha = "80" },
   -- Terminal: the dim colours and the dim foreground at 60% of their normal
   -- colour. ANSI black and white are the Palette's black and white, which
-  -- equal bg and fg in onedark and are the other way about in onelight.
+  -- equal bg and fg in the dark Variants and are the other way about in
+  -- onelight.
   ["terminal.ansi.dim_black"] = { "black", alpha = "99" },
   ["terminal.ansi.dim_red"] = { "red", alpha = "99" },
   ["terminal.ansi.dim_green"] = { "green", alpha = "99" },

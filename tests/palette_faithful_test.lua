@@ -13,6 +13,16 @@ local function colour_set(palette)
 end
 
 for _, t in ipairs(h.THEMES) do
+  test(string.format("every colour in the committed %s Palette is lowercase #rrggbb", t.variant), function()
+    local count = 0
+    h.each_colour(h.palette(t.variant), function(path, colour)
+      count = count + 1
+      assert(colour:match("^#[%da-f]+$") and #colour == 7,
+        path .. " = " .. colour .. " is not lowercase #rrggbb")
+    end)
+    assert(count > 0, "no colours found in the Palette")
+  end)
+
   test(string.format("every colour in %s, alpha stripped, is in the %s Palette", t.name, t.variant), function()
     local theme = h.theme(t.name)
     local palette = colour_set(h.palette(t.variant))

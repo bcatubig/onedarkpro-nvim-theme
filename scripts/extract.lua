@@ -34,13 +34,17 @@ end
 
 -- Colours from `colours` as an ordered object: `first` keys in that order,
 -- then any remaining colour keys sorted. Non-colour entries (Upstream's
--- `none = "NONE"`) are not part of the Palette and are dropped.
+-- `none = "NONE"`) are not part of the Palette and are dropped. Every colour
+-- is written lowercase: Upstream writes vaporwave's base colours in
+-- uppercase hex and everything it computes in lowercase, and lowercasing
+-- changes no colour, so the Palette files and the Theme Family keep one
+-- spelling across every Variant.
 local function ordered_colours(colours, first)
   local object = json.object()
   local seen = {}
   for _, key in ipairs(first or {}) do
     if is_colour(colours[key]) then
-      object:set(key, colours[key])
+      object:set(key, colours[key]:lower())
       seen[key] = true
     end
   end
@@ -52,7 +56,7 @@ local function ordered_colours(colours, first)
   end
   table.sort(rest)
   for _, key in ipairs(rest) do
-    object:set(key, colours[key])
+    object:set(key, colours[key]:lower())
   end
   return object
 end
@@ -65,8 +69,9 @@ end
 -- test catches any drift from Upstream's export (ADR-0003). Listed in the
 -- order of the base colours, then `fg`: Upstream's `bright_fg` lightens
 -- yellow by a typo, so the lightened `fg` it meant is computed here and the
--- typo'd value is not emitted. In onedark `white` equals `fg` and the two
--- coincide; in onelight `fg` is the dark colour and `white` the light one.
+-- typo'd value is not emitted. In the four dark Variants `white` equals `fg`
+-- and the two coincide; in onelight `fg` is the dark colour and `white` the
+-- light one.
 local BRIGHT_FROM = { "red", "orange", "yellow", "green", "cyan", "blue", "purple", "white", "black", "gray", "fg" }
 local BRIGHT_AMOUNT = 10
 
@@ -99,13 +104,12 @@ local function extract(variant)
   print("extracted " .. variant .. " -> " .. (vim.fs.relpath(root, path) or path))
 end
 
--- The Variants this extension ships, one Theme each. To add a Variant
--- (onedark_vivid, onedark_dark, vaporwave): add its name here and run make,
--- which writes its Palette file and builds its Theme from every committed
--- Palette file by the same Mapping; then give the tests its Upstream
--- literals in tests/variants.lua and its Theme name in tests/shape_test.lua.
--- No rule or Mapping changes.
-local VARIANTS = { "onedark", "onelight" }
+-- The Variants this extension ships, one Theme each: all five of Upstream's,
+-- in Palette filename order, which is the order their Themes take in the
+-- Theme Family. Stage two builds a Theme from every committed Palette file
+-- by the same Mapping; the tests take each Variant's Upstream literals from
+-- tests/variants.lua and pin the Theme names in tests/shape_test.lua.
+local VARIANTS = { "onedark", "onedark_dark", "onedark_vivid", "onelight", "vaporwave" }
 
 local variants = #arg > 0 and arg or VARIANTS
 for _, variant in ipairs(variants) do
