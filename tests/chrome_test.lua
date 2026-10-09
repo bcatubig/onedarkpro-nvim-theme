@@ -13,7 +13,7 @@ local h = require("helpers")
 local GROUPS = {
   { "bg", {
     "background", "editor.background", "editor.gutter.background", "surface.background",
-    "panel.background", "toolbar.background", "tab.active_background", "terminal.background",
+    "toolbar.background", "tab.active_background", "terminal.background",
     -- the vim mode indicator's text sits on its mode colour
     "vim.normal.foreground", "vim.insert.foreground", "vim.replace.foreground", "vim.visual.foreground",
     "vim.visual_line.foreground", "vim.visual_block.foreground", "vim.helix_normal.foreground",
@@ -22,7 +22,7 @@ local GROUPS = {
   { "bg_statusline", {
     "status_bar.background", "title_bar.background", "title_bar.inactive_background",
     "tab_bar.background", "tab.inactive_background", "editor.subheader.background",
-    "element.background",
+    "element.background", "panel.background",
   } },
   { "float_bg", { "elevated_surface.background", "panel.overlay_background" } },
   { "cursorline", {

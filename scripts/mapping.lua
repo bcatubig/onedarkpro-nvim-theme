@@ -78,13 +78,17 @@ return {
     -- Surfaces
     { "Editor surface", "bg", { -- Normal
       "background", "editor.background", "editor.gutter.background", "surface.background",
-      "panel.background", "toolbar.background", "tab.active_background", "terminal.background",
+      "toolbar.background", "tab.active_background", "terminal.background",
       "terminal.ansi.background",
     } },
     { "Statusline surface", "bg_statusline", { -- StatusLine
       "status_bar.background", "title_bar.background", "title_bar.inactive_background",
       "tab_bar.background", "tab.inactive_background", "editor.subheader.background",
       "element.background",
+      -- Every Panel joins the frame, so the editor is the one lit surface, as
+      -- One Dark Pro (binaryify)'s sidebar is darker than its editor. Upstream's
+      -- tree sits on bg; this is a Chrome choice, and one key fills all Panels.
+      "panel.background",
     } },
     { "Floating surface", "float_bg", { "elevated_surface.background", "panel.overlay_background" } }, -- NormalFloat
     { "Current line", "cursorline", { -- CursorLine; the hovered row of a menu, as Pmenu

@@ -247,8 +247,8 @@ Spec stories 14 to 41. Style Keys are in `scripts/mapping.lua` under the Chrome 
 | 22 | Search | `cmd-f` for `queue` | matches `highlight` at 30%, active match at 55% (composites below) |
 | 23 | Indent guides | any indented sample | `indentline`; the guide of the indent level the cursor is in, blue |
 | 24 | Invisibles and placeholders | `show_whitespaces: all`; an empty search box | gray |
-| 25 | Editor, project panel, panels, active tab | | `bg` |
-| 26 | Status bar, title bar, tab bar, inactive tabs | | `bg_statusline` |
+| 25 | Editor, active tab | | `bg` |
+| 26 | Panels, status bar, title bar, tab bar, inactive tabs | project panel, terminal and git panels | `bg_statusline` |
 | 27 | Popups, menus, pickers | command palette, file finder, completions | `float_bg` |
 | 28 | Menu rows | hover and arrow through the command palette | hovered row `cursorline`, selected row `selection` |
 | 29 | Pane splits | `pane: split right` | `gray` |
