@@ -27,10 +27,11 @@
 -- Each entry's comment names the Highlight Group it was copied from. Sub-keys
 -- not listed inherit by Zed's longest-dot-prefix rule, so `keyword.control`
 -- is `keyword` and `function.decorator` is `function`. Two entries copy the
--- group nvim shows rather than Upstream's table entry, because Upstream's
--- table never reaches the token: `function.kwargs`, a capture name only
--- Zed's Python query uses, and `string.regex`, whose Upstream entry is the
--- pre-0.10 capture name nvim-treesitter no longer emits (ticket #14).
+-- Highlight Group nvim shows rather than Upstream's entry for the name,
+-- because Upstream has none under the name Zed's query emits:
+-- `function.kwargs`, a capture name only Zed's Python query uses, and
+-- `string.regex`, whose Upstream entry is the pre-0.10 capture name
+-- nvim-treesitter no longer emits (ticket #14).
 --
 -- Filetype Override rule. Upstream scopes some Highlight Groups to one
 -- language (highlights/filetypes/*.lua); Zed has no per-language colours, so
@@ -68,8 +69,8 @@
 --      and `}` of an interpolation purple from @odp.punctuation.special.python.
 -- Deviations 8 and 9 were found by the sign-off kit (docs/sign-off.md), which
 -- also lists the Query Differences: tokens Zed's queries capture under a
--- different name from nvim-treesitter's, which the Mapping's values do not
--- decide.
+-- different name from nvim-treesitter's, which a Syntax Key of its own could
+-- not close without opening another.
 return {
   -- Style Keys, by Chrome Rule. A comment names the nvim Highlight Group a
   -- rule echoes where there is one.

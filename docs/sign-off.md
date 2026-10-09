@@ -21,7 +21,7 @@ Expected colours are given as Palette colour names; the hex values for both Vari
 - Open `sample.yml` as YAML, not Ansible. Your `file_types` send `*playbook*.yml`, `**/tasks/*.yml` and friends to the Ansible extension, which injects Jinja into `{{ }}` and recolours it; `samples/sample.yml` matches none of them.
 - For the Chrome checks: `"show_whitespaces": "all"`, `"inlay_hints": { "enabled": true }`, vim mode on (it is), and a second pane (`pane: split right`).
 
-**Reading the tables.** Each row is a token class the Mapping colours: what to look at in the sample, the expected colour, and the Zed Syntax Key and nvim group behind it. "Deviation n" points at the numbered list in the README and in the header of `scripts/mapping.lua`. "Query Difference" marks a token Zed's query captures under a different name from nvim-treesitter's, or not at all, so the Mapping cannot reach it; expect the two colours given.
+**Reading the tables.** Each row is a token class the Mapping colours: what to look at in the sample, the expected colour, and the Zed Syntax Key and nvim group behind it. "Deviation n" points at the numbered list in the README and in the header of `scripts/mapping.lua`. "Query Difference" marks a token Zed's query captures under a different name from nvim-treesitter's, or not at all, which a Syntax Key of its own could not close without opening another; expect the two colours given.
 
 The expectations below were derived by rendering each sample twice under headless nvim: once with Upstream and the nvim-treesitter queries installed on this machine (nvim-treesitter `main` at f603a2f, the queries your `:TSInstall` placed in `site/queries`), and once with Zed 1.23.2's own highlight queries (built-in Go, Python, Bash, YAML and Markdown; the Terraform extension's) resolved through the built Theme by Zed's rules. Your eyes are the final check; the derivation only says where to look.
 
@@ -91,7 +91,6 @@ Query Differences in this sample:
 
 - **Decorator names** `dataclass`, `retry`, and the `functools` in `@functools.wraps`: blue in Zed, where the whole decorator is `function.decorator`; in nvim the `@` is blue (Upstream's `@odp.decorator.python`), the name purple (the global `@attribute`), `functools` red. `property`, `classmethod` and `wraps` are blue in both. Zed sends only the three builtin decorators to `attribute`, which is why `attribute` is blue (its entry in `scripts/mapping.lua`).
 - **Type constructors** `range(times)`, `str(path)`: yellow in Zed, which names them `type.builtin` in call position, blue in nvim (`@odp.function.builtin.python`). The same tokens would be cyan under Deviation 4 if Zed named them `function.builtin`.
-
 - **Imported names** `functools`, `os`, `dataclasses`, `dataclass`, `field`, `pathlib`: red in Zed (`variable`; `Path` yellow as a class), fg in nvim (Upstream's `@odp.import_module.python`). Zed's query has no capture for import lists.
 - **`!r` and `:>4` inside f-strings**: fg in Zed (`embedded`), blue and green in nvim.
 - **`list` as a bare argument** (`default_factory=list`): red in Zed, yellow in nvim. Zed names builtin types `type.builtin` only in call and annotation position.

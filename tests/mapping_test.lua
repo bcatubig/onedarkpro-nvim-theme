@@ -8,8 +8,8 @@ local h = require("helpers")
 -- { Palette colour, the Syntax Keys it fills }.
 local GROUPS = {
   { "red", {
-    "variable", "variable.parameter", "variable.member", "property", "tag",
-    "string.special.symbol", "diff.minus", "title", "function.kwargs",
+    "variable", "variable.parameter", "variable.member", "function.kwargs", "property", "tag",
+    "string.special.symbol", "diff.minus", "title",
   } },
   { "yellow", {
     "variable.special", "type", "type.builtin", "constructor", "namespace", "enum",
