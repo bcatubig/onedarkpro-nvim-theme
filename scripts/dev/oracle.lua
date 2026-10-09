@@ -4,9 +4,9 @@
 -- text whose colour differs:
 --
 --   nvim side: Upstream from the submodule plus the nvim-treesitter parsers
---              and queries installed for this user (stdpath("data")/site,
---              or $ORACLE_NVIM_SITE), with Upstream's after/queries, resolved
---              by nvim's own priority and dot-fallback rules.
+--              and queries installed for this user (stdpath("data")/site),
+--              with Upstream's after/queries, resolved by nvim's own priority
+--              and dot-fallback rules.
 --   Zed side:  Zed's highlights.scm for the language, run over the same tree
 --              and resolved by Zed's rules through the built Theme Family's
 --              Syntax Keys: captures stack in query order and the top wins,
@@ -16,17 +16,19 @@
 --              Key (Zed 1.23.2, crates/language/src/buffer.rs, BufferChunks).
 --
 -- The Zed queries are fetched with curl on first run into
--- scripts/dev/.zed-queries/<tag>/ (gitignored), pinned below. They are not
--- vendored: Zed's built-in queries are under Zed's GPL licence. The nvim side
--- reflects this machine's nvim-treesitter, so the output is a description of
--- the user's two editors, not a test; docs/sign-off.md was derived from it.
--- Not a build or test input.
+-- scripts/dev/.zed-queries/ (gitignored), one directory per pinned source:
+-- Zed's built-in queries, which are under Zed's GPL licence and so are not
+-- vendored here, and the Terraform extension's, Apache-2.0, pinned to a
+-- commit of its own. The nvim side reflects this machine's nvim-treesitter,
+-- so the output describes the user's two editors; it is not a test.
+-- docs/sign-off.md was derived from it. Not a build or test input.
 --
 --   nvim --clean -l scripts/dev/oracle.lua <file> <lang> [--all]
 --
 -- <lang> is the nvim parser: go, python, bash, yaml, markdown or terraform.
 -- Injected languages (markdown_inline, the Go in a Markdown fence) are
--- handled. --all prints the agreeing runs too.
+-- handled when a Zed query is known for them. --all prints the agreeing
+-- runs too.
 
 local script = vim.fn.fnamemodify(debug.getinfo(1, "S").source:sub(2), ":p")
 local root = vim.fs.dirname(vim.fs.dirname(vim.fs.dirname(script)))
@@ -34,85 +36,124 @@ package.path = root .. "/scripts/?.lua;" .. package.path
 local json = require("lib.json")
 local util = require("lib.util")
 
+local USAGE = "usage: nvim --clean -l scripts/dev/oracle.lua <file> <lang> [--all]"
+local VARIANT = "onedark" -- the Theme resolved through; both Themes share the Mapping
+local THEME = "OneDarkPro Onedark"
 local ZED_TAG = "v1.23.2"
 local TERRAFORM_REF = "99bcfa52db879b6f71b803307a9640e04e336623" -- zed-extensions/terraform main, 2026-10-09
-local CACHE = root .. "/scripts/dev/.zed-queries/" .. ZED_TAG
-local THEME = "OneDarkPro Onedark"
-local COLORSCHEME = "onedark"
+local CACHE = root .. "/scripts/dev/.zed-queries"
+
+-- Zed's query for each nvim parser language: where to fetch it, and where
+-- it is cached, keyed by the pin so that bumping a pin refetches.
+local function zed_builtin(name)
+  return {
+    url = "https://raw.githubusercontent.com/zed-industries/zed/" .. ZED_TAG .. "/crates/grammars/src/" .. name .. "/highlights.scm",
+    path = CACHE .. "/zed-" .. ZED_TAG .. "/" .. name .. ".scm",
+  }
+end
+local ZED_QUERY = {
+  go = zed_builtin("go"),
+  python = zed_builtin("python"),
+  bash = zed_builtin("bash"),
+  yaml = zed_builtin("yaml"),
+  markdown = zed_builtin("markdown"),
+  markdown_inline = zed_builtin("markdown-inline"),
+  terraform = {
+    url = "https://raw.githubusercontent.com/zed-extensions/terraform/" .. TERRAFORM_REF .. "/languages/terraform/highlights.scm",
+    path = CACHE .. "/terraform-" .. TERRAFORM_REF:sub(1, 7) .. "/terraform.scm",
+  },
+}
 
 local file, lang = arg[1], arg[2]
-local show_all = arg[3] == "--all"
+local show_all = false
+for i = 3, #arg do
+  if arg[i] == "--all" then
+    show_all = true
+  else
+    util.fail(USAGE)
+  end
+end
 if not file or not lang then
-  util.fail("usage: nvim --clean -l scripts/dev/oracle.lua <file> <lang> [--all]")
+  util.fail(USAGE)
 end
 
-local site = os.getenv("ORACLE_NVIM_SITE") or (vim.fn.stdpath("data") .. "/site")
-vim.opt.rtp:prepend(site) -- nvim-treesitter's parsers and queries
+vim.opt.rtp:prepend(vim.fn.stdpath("data") .. "/site") -- nvim-treesitter's parsers and queries
 vim.opt.rtp:prepend(root .. "/upstream")
 vim.opt.rtp:append(root .. "/upstream/after") -- Upstream's `; extends` queries, after the base ones
 
 require("onedarkpro").setup({ options = { transparency = false, cursorline = true } })
-vim.cmd.colorscheme(COLORSCHEME)
+vim.cmd.colorscheme(VARIANT)
 
--- Zed's query for an nvim parser language, fetched on first use.
-local ZED_QUERY = {
-  go = "go", python = "python", bash = "bash", yaml = "yaml", markdown = "markdown",
-  markdown_inline = "markdown-inline", terraform = "terraform", hcl = "terraform",
-}
-local function zed_query_text(name)
-  local path = CACHE .. "/" .. name .. ".scm"
-  if vim.fn.filereadable(path) == 0 then
-    local url
-    if name == "terraform" then
-      url = "https://raw.githubusercontent.com/zed-extensions/terraform/" .. TERRAFORM_REF .. "/languages/terraform/highlights.scm"
-    else
-      url = "https://raw.githubusercontent.com/zed-industries/zed/" .. ZED_TAG .. "/crates/grammars/src/" .. name .. "/highlights.scm"
+-- The text of Zed's query for `tlang`, fetched on first use. A download is
+-- written beside its final name and renamed only when curl succeeds, so a
+-- failed one is not mistaken for a cached query next time.
+local function zed_query_text(tlang)
+  local source = ZED_QUERY[tlang]
+  if vim.fn.filereadable(source.path) == 0 then
+    vim.fn.mkdir(vim.fs.dirname(source.path), "p")
+    local partial = source.path .. ".part"
+    local ok, result = pcall(function()
+      return vim.system({ "curl", "-fsSL", source.url, "-o", partial }, { text = true }):wait()
+    end)
+    if not ok then
+      util.fail("cannot run curl to fetch " .. source.url .. ": " .. tostring(result))
     end
-    vim.fn.mkdir(CACHE, "p")
-    local result = vim.system({ "curl", "-fsSL", url, "-o", path }, { text = true }):wait()
     if result.code ~= 0 then
-      util.fail("cannot fetch " .. url .. ": " .. result.stderr)
+      os.remove(partial)
+      util.fail("cannot fetch " .. source.url .. ": " .. result.stderr)
     end
-    io.stderr:write("fetched " .. url .. "\n")
+    os.rename(partial, source.path)
+    io.stderr:write("fetched " .. source.url .. "\n")
   end
-  return util.read(path)
+  return util.read(source.path)
 end
 
--- Palette: hex -> name, preferring fg and bg over white and black.
-local palette = json.decode(util.read(root .. "/palettes/" .. COLORSCHEME .. ".json"))
-local hex2name = {}
-for _, name in ipairs({ "fg", "bg" }) do hex2name[palette.base[name]:lower()] = name end
+-- Palette: hex -> name, preferring fg and bg over white and black, which
+-- share their values in onedark.
+local palette = json.decode(util.read(root .. "/palettes/" .. VARIANT .. ".json"))
+local hex_to_name = {}
+for _, name in ipairs({ "fg", "bg" }) do hex_to_name[palette.base[name]:lower()] = name end
 for _, group in ipairs({ palette.base, palette.derived, palette.bright }) do
   for name, hex in pairs(group) do
-    if not hex2name[hex:lower()] then hex2name[hex:lower()] = name end
+    if not hex_to_name[hex:lower()] then hex_to_name[hex:lower()] = name end
   end
 end
-local function pname(hex)
+local function palette_name(hex)
   if not hex or hex == "" then return "fg" end
-  return hex2name[hex:lower()] or hex
+  return hex_to_name[hex:lower()] or hex
 end
 
--- The Theme's Syntax Keys, and Zed's longest-dot-prefix resolution.
-local syntax
-for _, t in ipairs(json.decode(util.read(root .. "/themes/onedarkpro.json")).themes) do
-  if t.name == THEME then syntax = t.style.syntax end
+local function describe(colour_name, bold, italic)
+  return colour_name .. (bold and " bold" or "") .. (italic and " italic" or "")
 end
-assert(syntax, "the Theme Family has no Theme named " .. THEME)
+
+-- The Theme's Syntax Keys, and Zed's longest-dot-prefix resolution of a
+-- capture name to one of them.
+local syntax
+for _, theme in ipairs(json.decode(util.read(root .. "/themes/onedarkpro.json")).themes) do
+  if theme.name == THEME then syntax = theme.style.syntax end
+end
+if not syntax then
+  util.fail("the Theme Family has no Theme named " .. THEME)
+end
 local function zed_resolve(capture)
   local key = capture
   while key do
-    local s = syntax[key]
-    if s then
-      return pname(s.color) .. (s.font_weight == 700 and " bold" or "") .. (s.font_style == "italic" and " italic" or ""), key
+    local style = syntax[key]
+    if style then
+      return describe(palette_name(style.color), style.font_weight == 700, style.font_style == "italic"), key
     end
     key = key:match("^(.+)%.[^.]+$")
   end
-  return "fg", "(undefined)"
+  return nil
 end
 
 vim.cmd.edit(file)
 local buf = vim.api.nvim_get_current_buf()
-local parser = vim.treesitter.get_parser(buf, lang)
+local ok, parser = pcall(vim.treesitter.get_parser, buf, lang)
+if not ok then
+  util.fail("no nvim parser for " .. lang .. ": " .. tostring(parser))
+end
 parser:parse(true)
 
 -- nvim's resolution of a capture: link following and @a.b.c -> @a.b fallback.
@@ -125,46 +166,47 @@ local function nvim_hl(name)
       fg = fg ~= "" and fg or nil,
       bold = vim.fn.synIDattr(final, "bold") == "1",
       italic = vim.fn.synIDattr(final, "italic") == "1",
-      final = vim.fn.synIDattr(final, "name"),
+      group = vim.fn.synIDattr(final, "name"),
     }
   end
   return hl_cache[name]
 end
 
+-- Captures of both sides, bucketed by row. A capture records its range, its
+-- name and language, and what decides precedence on its side: nvim's
+-- priority and application order, Zed's node size and pattern index.
 local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
-local nvim_caps, zed_caps = {}, {} -- captures bucketed by row
+local nvim_caps, zed_caps = {}, {}
 for r = 1, #lines do nvim_caps[r], zed_caps[r] = {}, {} end
-local function bucket(t, cap)
+local function bucket(buckets, cap)
   for r = cap.srow, cap.erow do
-    if t[r + 1] then table.insert(t[r + 1], cap) end
+    if buckets[r + 1] then table.insert(buckets[r + 1], cap) end
   end
 end
 
 local order = 0
 parser:for_each_tree(function(tree, ltree)
   local tlang = ltree:lang()
+  if not ZED_QUERY[tlang] then
+    print("(skipping injected language " .. tlang .. ": no Zed query known for it)")
+    return
+  end
   local tree_root = tree:root()
-  local q = vim.treesitter.query.get(tlang, "highlights")
-  if q then
-    for id, node, metadata in q:iter_captures(tree_root, buf, 0, -1) do
+  local nvim_query = vim.treesitter.query.get(tlang, "highlights")
+  if nvim_query then
+    for id, node, metadata in nvim_query:iter_captures(tree_root, buf, 0, -1) do
       local srow, scol, erow, ecol = node:range()
       order = order + 1
       local prio = tonumber((metadata[id] and metadata[id].priority) or metadata.priority) or 100
-      bucket(nvim_caps, { srow = srow, scol = scol, erow = erow, ecol = ecol, name = q.captures[id], lang = tlang, prio = prio, order = order })
+      bucket(nvim_caps, { srow = srow, scol = scol, erow = erow, ecol = ecol, name = nvim_query.captures[id], lang = tlang, prio = prio, order = order })
     end
   end
-  local zq = ZED_QUERY[tlang]
-  if not zq then
-    print("(no Zed query for injected language " .. tlang .. ")")
-    return
+  local parsed, zed_query = pcall(vim.treesitter.query.parse, tlang, zed_query_text(tlang))
+  if not parsed then
+    util.fail("Zed's " .. tlang .. " query does not parse against this nvim parser: " .. tostring(zed_query))
   end
-  local ok, zquery = pcall(vim.treesitter.query.parse, tlang, zed_query_text(zq))
-  if not ok then
-    print("Zed query for " .. tlang .. " does not parse against this nvim parser: " .. tostring(zquery))
-    return
-  end
-  for id, node, _, match in zquery:iter_captures(tree_root, buf, 0, -1) do
-    local name = zquery.captures[id]
+  for id, node, _, match in zed_query:iter_captures(tree_root, buf, 0, -1) do
+    local name = zed_query.captures[id]
     if not name:match("^_") then
       local srow, scol, erow, ecol = node:range()
       local _, _, sbyte = node:start()
@@ -183,77 +225,99 @@ local function covers(cap, row, col)
   return true
 end
 
--- nvim applies captures in priority order, later ones on top; a capture with
--- no fg leaves the fg beneath it.
-local function nvim_at(row, col)
-  local cands = {}
-  for _, cap in ipairs(nvim_caps[row + 1]) do
-    if covers(cap, row, col) then cands[#cands + 1] = cap end
+-- The captures covering a position, in the order the side applies them.
+local function covering(buckets, row, col, before)
+  local caps = {}
+  for _, cap in ipairs(buckets[row + 1]) do
+    if covers(cap, row, col) then caps[#caps + 1] = cap end
   end
-  table.sort(cands, function(a, b)
+  table.sort(caps, before)
+  return caps
+end
+
+-- Both sides answer with a Rendering: the colour as shown (a Palette name
+-- plus bold/italic), the capture that decided it, and what it resolved to.
+local function rendering(colour, capture, resolved)
+  return { colour = colour, capture = capture or "-", resolved = resolved or "-" }
+end
+
+-- nvim applies captures in priority order, later ones on top; a capture with
+-- no fg leaves the fg beneath it, so bold and italic accumulate.
+local function nvim_at(row, col)
+  local caps = covering(nvim_caps, row, col, function(a, b)
     if a.prio ~= b.prio then return a.prio < b.prio end
     return a.order < b.order
   end)
-  local fg, bold, italic, why = nil, false, false, {}
-  for _, cap in ipairs(cands) do
+  local fg, bold, italic, decider = nil, false, false, nil
+  for _, cap in ipairs(caps) do
     local hl = nvim_hl("@" .. cap.name .. "." .. cap.lang)
-    if hl.fg then fg = hl.fg; why = { cap.name, hl.final } end
+    if hl.fg then fg = hl.fg; decider = { capture = cap.name, group = hl.group } end
     if hl.bold then bold = true end
     if hl.italic then italic = true end
   end
-  return pname(fg) .. (bold and " bold" or "") .. (italic and " italic" or ""), why[1] or "-", why[2] or "-"
+  return rendering(describe(palette_name(fg), bold, italic), decider and decider.capture, decider and decider.group)
 end
 
--- Zed: innermost node, then the later pattern; unmapped captures are skipped.
+-- Zed: the innermost node (smallest span; equal spans fall to the pattern
+-- order), then the later pattern; a capture with no Syntax Key is skipped.
 local function zed_at(row, col)
-  local cands = {}
-  for _, cap in ipairs(zed_caps[row + 1]) do
-    if covers(cap, row, col) then cands[#cands + 1] = cap end
-  end
-  table.sort(cands, function(a, b)
+  local caps = covering(zed_caps, row, col, function(a, b)
     if a.size ~= b.size then return a.size < b.size end
     return a.pattern > b.pattern
   end)
-  for _, cap in ipairs(cands) do
+  for _, cap in ipairs(caps) do
     local colour, key = zed_resolve(cap.name)
-    if key ~= "(undefined)" then return colour, cap.name, key end
+    if colour then return rendering(colour, cap.name, key) end
   end
-  if cands[1] then return "fg", cands[1].name, "(undefined)" end
-  return "fg", "-", "-"
+  return rendering("fg", caps[1] and caps[1].name, caps[1] and "(no Syntax Key)")
+end
+
+local function is_blank(byte)
+  return byte == 32 or byte == 9
+end
+
+local function utf8_step(byte)
+  if byte >= 0xF0 then return 4 elseif byte >= 0xE0 then return 3 elseif byte >= 0xC0 then return 2 end
+  return 1
+end
+
+local function format_side(r)
+  return string.format("%-16s (%s -> %s)", r.colour, r.capture, r.resolved)
 end
 
 local diffs, total = 0, 0
 for r, line in ipairs(lines) do
   local row = r - 1
+  -- Runs: consecutive non-blank characters with the same Rendering on both sides.
   local runs = {}
   local col = 0
   while col < #line do
-    local b = line:byte(col + 1)
-    local n, z, ncap, nfinal, zcap, zkey
-    if b ~= 32 and b ~= 9 then
-      n, ncap, nfinal = nvim_at(row, col)
-      z, zcap, zkey = zed_at(row, col)
-    end
-    local key = n and (n .. "|" .. z .. "|" .. (ncap or "") .. "|" .. (zcap or "")) or " "
-    local last = runs[#runs]
-    if last and last.key == key then
-      last.e = col + 1
+    local byte = line:byte(col + 1)
+    local step = utf8_step(byte)
+    local nvim_r, zed_r, signature
+    if is_blank(byte) then
+      signature = " "
     else
-      runs[#runs + 1] = { key = key, s = col, e = col + 1, n = n, z = z, ncap = ncap, nfinal = nfinal, zcap = zcap, zkey = zkey }
+      nvim_r, zed_r = nvim_at(row, col), zed_at(row, col)
+      signature = table.concat({ nvim_r.colour, nvim_r.capture, zed_r.colour, zed_r.capture }, "|")
     end
-    local step = 1 -- advance one UTF-8 character
-    if b >= 0xF0 then step = 4 elseif b >= 0xE0 then step = 3 elseif b >= 0xC0 then step = 2 end
+    local last = runs[#runs]
+    if last and last.signature == signature then
+      last.e = col + step
+    else
+      runs[#runs + 1] = { signature = signature, s = col, e = col + step, nvim = nvim_r, zed = zed_r }
+    end
     col = col + step
   end
   local out = {}
   for _, run in ipairs(runs) do
-    if run.n then
+    if run.nvim then
       total = total + 1
-      local same = run.n == run.z
+      local same = run.nvim.colour == run.zed.colour
       if not same then diffs = diffs + 1 end
       if show_all or not same then
-        out[#out + 1] = string.format("  %s %-28s nvim=%-16s (%s -> %s)  zed=%-16s (%s -> %s)",
-          same and "  " or "!!", string.format("%q", line:sub(run.s + 1, run.e)), run.n, run.ncap, run.nfinal, run.z, run.zcap, run.zkey)
+        out[#out + 1] = string.format("  %s %-28s nvim=%s  zed=%s",
+          same and "  " or "!!", string.format("%q", line:sub(run.s + 1, run.e)), format_side(run.nvim), format_side(run.zed))
       end
     end
   end
