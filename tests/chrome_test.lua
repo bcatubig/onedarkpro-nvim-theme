@@ -13,7 +13,7 @@ local h = require("helpers")
 local GROUPS = {
   { "bg", {
     "background", "editor.background", "editor.gutter.background", "surface.background",
-    "panel.background", "toolbar.background", "tab.active_background", "terminal.background",
+    "toolbar.background", "tab.active_background", "terminal.background",
     -- the vim mode indicator's text sits on its mode colour
     "vim.normal.foreground", "vim.insert.foreground", "vim.replace.foreground", "vim.visual.foreground",
     "vim.visual_line.foreground", "vim.visual_block.foreground", "vim.helix_normal.foreground",
@@ -22,7 +22,7 @@ local GROUPS = {
   { "bg_statusline", {
     "status_bar.background", "title_bar.background", "title_bar.inactive_background",
     "tab_bar.background", "tab.inactive_background", "editor.subheader.background",
-    "element.background",
+    "element.background", "panel.background",
   } },
   { "float_bg", { "elevated_surface.background", "panel.overlay_background" } },
   { "cursorline", {
@@ -40,21 +40,20 @@ local GROUPS = {
   } },
   { "blue", {
     "text.accent", "icon.accent", "link_text.hover", "editor.indent_guide_active",
-    "panel.indent_guide_active",
     "info", "renamed", "conflict", "version_control.renamed", "version_control.conflict",
     "vim.insert.background",
   } },
   { "gray", {
     "pane_group.border", "text.placeholder", "text.disabled", "icon.placeholder", "icon.disabled",
-    "editor.invisible", "panel.indent_guide",
+    "editor.invisible", "panel.indent_guide", "panel.indent_guide_active",
     "predictive", "ignored", "hidden", "unreachable", "version_control.ignored",
   } },
   { "fg_gutter", { "border", "border.variant", "border.disabled", "scrollbar.track.border" } },
   { "fg", { "text", "icon", "editor.foreground", "editor.hover_line_number", "terminal.foreground" } },
-  { "comment", { "text.muted", "icon.muted", "editor.code_lens.foreground" } },
+  { "comment", { "text.muted", "icon.muted", "editor.code_lens.foreground", "panel.indent_guide_hover" } },
   { "line_number", { "editor.line_number" } },
   { "indentline", {
-    "editor.indent_guide", "editor.wrap_guide", "editor.active_wrap_guide", "panel.indent_guide_hover",
+    "editor.indent_guide", "editor.wrap_guide", "editor.active_wrap_guide",
   } },
   { "fold", { "editor.highlighted_line.background" } },
   { "diff_change", { "editor.debugger_active_line.background", "modified.background" } },

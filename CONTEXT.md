@@ -60,6 +60,10 @@ _Avoid_: scope, highlight
 The Style Keys of a Theme taken together: title bar, tabs, panels, status bar, scrollbars, players, and the editor surfaces (current line, gutter, selection, search) that nvim also styles. Filled by Chrome Rules, which may echo a Highlight Group but never copy one.
 _Avoid_: UI, non-editor colours
 
+**Panel**:
+A Zed dock surface: the project panel, outline, git, terminal, agent and debugger panels, and the other docked views. All Panels share one background Style Key, so a Panel surface is chosen once for all of them.
+_Avoid_: sidebar, files menu, explorer, file tree
+
 ### This project
 
 **Mapping**:
