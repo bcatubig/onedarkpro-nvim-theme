@@ -21,7 +21,7 @@ Expected colours are given as Palette colour names; the hex values for both Vari
 - Open `sample.yml` as YAML, not Ansible. Your `file_types` send `*playbook*.yml`, `**/tasks/*.yml` and friends to the Ansible extension, which injects Jinja into `{{ }}` and recolours it; `samples/sample.yml` matches none of them.
 - For the Chrome checks: `"show_whitespaces": "all"`, `"inlay_hints": { "enabled": true }`, vim mode on (it is), and a second pane (`pane: split right`).
 
-**Reading the tables.** Each row is a token class the Mapping colours: what to look at in the sample, the expected colour, and the Zed Syntax Key and nvim group behind it. "Deviation n" points at the numbered list in the README and in the header of `scripts/mapping.lua`. "Query Difference" marks a token Zed's query captures under a different name from nvim-treesitter's, or not at all, so the Mapping cannot reach it; expect the two colours given.
+**Reading the tables.** Each row is a token class the Mapping colours: what to look at in the sample, the expected colour, and the Zed Syntax Key and nvim group behind it. "Deviation n" points at the numbered list in the README and in the header of `scripts/mapping.lua`. "Query Difference" marks a token Zed's query captures under a different name from nvim-treesitter's, or not at all, which a Syntax Key of its own could not close without opening another; expect the two colours given.
 
 The expectations below were derived by rendering each sample twice under headless nvim: once with Upstream and the nvim-treesitter queries installed on this machine (nvim-treesitter `main` at f603a2f, the queries your `:TSInstall` placed in `site/queries`), and once with Zed 1.23.2's own highlight queries (built-in Go, Python, Bash, YAML and Markdown; the Terraform extension's) resolved through the built Theme by Zed's rules. The script is `scripts/dev/oracle.lua`; its header says how to run it on a sample. Your eyes are the final check; the derivation only says where to look.
 
@@ -80,6 +80,7 @@ Spec stories 8, 9.
 | Splat operators | `*args`, `**kwargs`, `*self.items` | **Deviation 8**: cyan in Zed, fg in nvim | `operator` | `@odp.operator.splat.python` |
 | Brackets | `(` `)` `[` `]` `{` `}` | **Deviation 1**: purple in Zed, orange in nvim | `punctuation.bracket` | `@odp.punctuation.bracket.python` |
 | Variables, parameters, attributes | `item`, `last`, `q`, `fn`, `.items`, `.limit`, `os.environ` | red | `variable`, `variable.parameter`, `property` | `@variable`, `@variable.parameter`, `@variable.member` |
+| Keyword-argument names | `name=`, `times=`, `sep=`, `file=`, `encoding=`, `default_factory=` | red | `function.kwargs` | `@variable.parameter` |
 | Operators | `=`, `==`, `>=`, `>`, `->`, `/`, `*` | cyan | `operator` | `@operator` |
 | Delimiters | `.`, `,`, `:` | fg | `punctuation.delimiter` | Delimiter |
 | Comments | `# a trailing comment` | comment | `comment` | Comment |
@@ -90,8 +91,6 @@ Query Differences in this sample:
 
 - **Decorator names** `dataclass`, `retry`, and the `functools` in `@functools.wraps`: blue in Zed, where the whole decorator is `function.decorator`; in nvim the `@` is blue (Upstream's `@odp.decorator.python`), the name purple (the global `@attribute`), `functools` red. `property`, `classmethod` and `wraps` are blue in both. Zed sends only the three builtin decorators to `attribute`, which is why `attribute` is blue (its entry in `scripts/mapping.lua`).
 - **Type constructors** `range(times)`, `str(path)`: yellow in Zed, which names them `type.builtin` in call position, blue in nvim (`@odp.function.builtin.python`). The same tokens would be cyan under Deviation 4 if Zed named them `function.builtin`.
-
-- **Keyword-argument names** `name=`, `times=`, `sep=`, `file=`, `encoding=`, `default_factory=`: blue in Zed (`function.kwargs`, which inherits `function`), red in nvim (`@variable.parameter`). Closable by giving `function.kwargs` its own Syntax Key, red; a follow-up decision.
 - **Imported names** `functools`, `os`, `dataclasses`, `dataclass`, `field`, `pathlib`: red in Zed (`variable`; `Path` yellow as a class), fg in nvim (Upstream's `@odp.import_module.python`). Zed's query has no capture for import lists.
 - **`!r` and `:>4` inside f-strings**: fg in Zed (`embedded`), blue and green in nvim.
 - **`list` as a bare argument** (`default_factory=list`): red in Zed, yellow in nvim. Zed names builtin types `type.builtin` only in call and annotation position.
@@ -207,6 +206,7 @@ Spec story 13.
 | Function names and commands | `usage`, `log`, `cat`, `mkdir`, `ping`, `sleep`, `dpkg`, `apt-get`, `find`, `wc`, `date` | blue | `function` | `@function`, `@function.call` |
 | Variables | `attempt`, `count`, `pkg`, `level`, `opt`, `packages` | red | `variable` | `@variable` |
 | Strings | `"…"`, `'…'`, `$'ANSI-C string with a tab\there'`, the heredoc body | green | `string` | `@string` |
+| Regex | `^python3-` after `=~` | blue | `string.regex` | `@string.regexp` (nvim links it to `@string.special`, Special) |
 | Numbers | `3`, `0`, `1`, `64`, `100` | orange | `number` | Number |
 | Operators | `\|\|`, `&&`, `\|`, `>`, `>&2`, `=~`, `+`, `-`, `*`, `/`, `=` | cyan | `operator` | `@operator` |
 | Brackets | `[[ ]]`, `(( ))`, `{ }`, `( )` | purple | `punctuation.bracket` | `@punctuation.bracket` |
@@ -223,9 +223,8 @@ Query Differences in this sample. Zed's bash query is the furthest from nvim-tre
 - **Flags** `-euo`, `-p`, `-c`, `-W`, `-s`, `-y`, `-type`, `-name`, `-l`, `-e`: orange in Zed (`constant`), red in nvim.
 - **Test operators** `-d`, `-z`, `-ge`, `-gt`: purple in Zed (`keyword.operator`), cyan in nvim.
 - **Special variables** `$*`, `$#`, `$?`: the character after `$` yellow in Zed (`variable.special`), orange in nvim.
-- **`case` patterns** `n)`, `v)`, `\?)`: green in Zed (`string.regex`), red in nvim.
+- **`case` patterns** `n)`, `v)`, `\?)`: blue in Zed, whose query names them `string.regex`, red in nvim (`@variable.parameter`).
 - **Heredoc delimiter** `EOF`: green in Zed (`string`), purple in nvim (`@label`).
-- **Regex** `^python3-`: green in Zed (`string.regex`), blue in nvim. Upstream's `@string.regex` is the pre-0.10 capture name; nvim-treesitter now emits `@string.regexp`, which nvim links to `@string.special`, Special, blue. A follow-up could move `string.regex` to blue to match what nvim shows.
 - **Redirect targets** `/dev/null`: green in Zed, blue in nvim (`@string.special.path`). **File descriptors** `2` in `2>&1`: orange in Zed, cyan in nvim. **`&>`**: fg in Zed, cyan in nvim.
 - **`readonly`**: fg in Zed (no capture), purple in nvim. **`@` in `"${packages[@]}"`**: green in Zed, purple in nvim.
 

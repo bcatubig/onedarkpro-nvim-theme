@@ -26,7 +26,12 @@
 -- (highlights/plugins/lsp_semantic_tokens.lua) where treesitter has no entry.
 -- Each entry's comment names the Highlight Group it was copied from. Sub-keys
 -- not listed inherit by Zed's longest-dot-prefix rule, so `keyword.control`
--- is `keyword` and `function.decorator` is `function`.
+-- is `keyword` and `function.decorator` is `function`. Two entries copy the
+-- Highlight Group nvim shows rather than Upstream's entry for the name,
+-- because Upstream has none under the name Zed's query emits:
+-- `function.kwargs`, a capture name only Zed's Python query uses, and
+-- `string.regex`, whose Upstream entry is the pre-0.10 capture name
+-- nvim-treesitter no longer emits (ticket #14).
 --
 -- Filetype Override rule. Upstream scopes some Highlight Groups to one
 -- language (highlights/filetypes/*.lua); Zed has no per-language colours, so
@@ -64,8 +69,8 @@
 --      and `}` of an interpolation purple from @odp.punctuation.special.python.
 -- Deviations 8 and 9 were found by the sign-off kit (docs/sign-off.md), which
 -- also lists the Query Differences: tokens Zed's queries capture under a
--- different name from nvim-treesitter's, which the Mapping's values do not
--- decide.
+-- different name from nvim-treesitter's, which a Syntax Key of its own could
+-- not close without opening another.
 return {
   -- Style Keys, by Chrome Rule. A comment names the nvim Highlight Group a
   -- rule echoes where there is one.
@@ -262,6 +267,7 @@ return {
     { "variable", "red" }, -- @variable
     { "variable.parameter", "red" }, -- @variable.parameter
     { "variable.member", "red" }, -- @variable.member
+    { "function.kwargs", "red" }, -- @variable.parameter: Zed's Python query names keyword-argument names function.kwargs, which would inherit function, blue; nvim-treesitter names the same token @variable.parameter
     { "property", "red" }, -- @property (Deviation 7)
     { "tag", "red" }, -- @tag
     { "string.special.symbol", "red" }, -- @string.special.symbol
@@ -289,6 +295,7 @@ return {
     { "function", "blue" }, -- Function, @function; function.call and function.decorator inherit
     { "function.method", "blue" }, -- @function.method
     { "string.special", "blue" }, -- @string.special -> Special
+    { "string.regex", "blue" }, -- @string.regexp -> @string.special -> Special, what nvim shows: Upstream's @string.regex (green) is the pre-0.10 name, which nvim-treesitter no longer emits
     { "link_text", "blue" }, -- @text.reference.markdown_inline (Markdown Filetype Override)
     { "attribute", "blue" }, -- @attribute.builtin: Zed names only @property, @classmethod and @staticmethod `attribute`, and nvim shows those blue (Special), so blue by the Filetype Override rule over @attribute purple; plain decorator names reach Zed as function.decorator, a Query Difference
 
@@ -301,7 +308,6 @@ return {
 
     -- green
     { "string", "green" }, -- String, @string
-    { "string.regex", "green" }, -- @string.regex
     { "text.literal", "green" }, -- @text.literal.markdown_inline (Markdown Filetype Override)
     { "diff.plus", "green" }, -- added lines in diffs; DiffAdd is a tint of green
 

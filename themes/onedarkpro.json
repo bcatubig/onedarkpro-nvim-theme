@@ -255,6 +255,9 @@
           "variable.member": {
             "color": "#e06c75"
           },
+          "function.kwargs": {
+            "color": "#e06c75"
+          },
           "property": {
             "color": "#e06c75"
           },
@@ -320,6 +323,9 @@
           "string.special": {
             "color": "#61afef"
           },
+          "string.regex": {
+            "color": "#61afef"
+          },
           "link_text": {
             "color": "#61afef"
           },
@@ -342,9 +348,6 @@
             "color": "#56b6c2"
           },
           "string": {
-            "color": "#98c379"
-          },
-          "string.regex": {
             "color": "#98c379"
           },
           "text.literal": {
@@ -660,6 +663,9 @@
           "variable.member": {
             "color": "#e05661"
           },
+          "function.kwargs": {
+            "color": "#e05661"
+          },
           "property": {
             "color": "#e05661"
           },
@@ -725,6 +731,9 @@
           "string.special": {
             "color": "#118dc3"
           },
+          "string.regex": {
+            "color": "#118dc3"
+          },
           "link_text": {
             "color": "#118dc3"
           },
@@ -747,9 +756,6 @@
             "color": "#56b6c2"
           },
           "string": {
-            "color": "#1da912"
-          },
-          "string.regex": {
             "color": "#1da912"
           },
           "text.literal": {
