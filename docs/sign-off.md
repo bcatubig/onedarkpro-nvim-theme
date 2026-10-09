@@ -245,8 +245,8 @@ Spec stories 14 to 41. Style Keys are in `scripts/mapping.lua` under the Chrome 
 | 20 | Selection | select text | `selection` (player one) |
 | 21 | Cursor | | purple |
 | 22 | Search | `cmd-f` for `queue` | matches `highlight` at 30%, active match at 55% (composites below) |
-| 23 | Editor indent guides | any indented sample | `indentline`; the guide of the indent level the cursor is in, blue |
-| 24 | Panel indent guides | expand nested folders in the project panel; hover a guide | gray, the active folder's guide no different; hovered guide `comment` |
+| 23 | Editor Guides | any indented sample | `indentline`; the guide of the indent level the cursor is in, blue |
+| 24 | Panel Guides | expand nested folders in the project panel; hover a Guide | `fg_gutter`, the same hairline as the Panel's edge, the active folder's Guide no different; hovered Guide gray |
 | 25 | Invisibles and placeholders | `show_whitespaces: all`; an empty search box | gray |
 | 26 | Editor, active tab | | `bg` |
 | 27 | Panels, status bar, title bar, tab bar, inactive tabs | project panel, terminal and git panels | `bg_statusline` |
@@ -263,7 +263,7 @@ Spec stories 14 to 41. Style Keys are in `scripts/mapping.lua` under the Chrome 
 | 38 | Diff hunks | the gutter after an edit; `git: diff` | added `diff_add`, deleted `diff_delete`; hollow borders green and red |
 | 39 | Word-level diff | the project diff | `diff_text` added, `diff_text_delete` deleted |
 | 40 | Vim mode indicator | status bar in each mode | normal green, insert blue, visual yellow, replace red; text `bg` |
-| 41 | Accents | `indent_guides.coloring: indent_aware` | guides cycle red, yellow, blue, orange, green, purple, cyan |
+| 41 | Accents | `indent_guides.coloring: indent_aware` | Guides cycle red, yellow, blue, orange, green, purple, cyan |
 | 42 | Collaborator cursors | a collab session, or `themes/onedarkpro.json` `players` | player one purple; then blue, green, yellow, red, cyan, orange, gray |
 
 Alpha composites over `bg` for an eyedropper:

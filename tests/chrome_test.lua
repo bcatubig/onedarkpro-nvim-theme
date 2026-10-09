@@ -45,12 +45,15 @@ local GROUPS = {
   } },
   { "gray", {
     "pane_group.border", "text.placeholder", "text.disabled", "icon.placeholder", "icon.disabled",
-    "editor.invisible", "panel.indent_guide", "panel.indent_guide_active",
+    "editor.invisible", "panel.indent_guide_hover",
     "predictive", "ignored", "hidden", "unreachable", "version_control.ignored",
   } },
-  { "fg_gutter", { "border", "border.variant", "border.disabled", "scrollbar.track.border" } },
+  { "fg_gutter", {
+    "border", "border.variant", "border.disabled", "scrollbar.track.border",
+    "panel.indent_guide", "panel.indent_guide_active",
+  } },
   { "fg", { "text", "icon", "editor.foreground", "editor.hover_line_number", "terminal.foreground" } },
-  { "comment", { "text.muted", "icon.muted", "editor.code_lens.foreground", "panel.indent_guide_hover" } },
+  { "comment", { "text.muted", "icon.muted", "editor.code_lens.foreground" } },
   { "line_number", { "editor.line_number" } },
   { "indentline", {
     "editor.indent_guide", "editor.wrap_guide", "editor.active_wrap_guide",

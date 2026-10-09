@@ -111,7 +111,15 @@ return {
 
     -- Borders
     { "Pane splits", "gray", { "pane_group.border" } }, -- WinSeparator
-    { "Quiet borders", "fg_gutter", { "border", "border.variant", "border.disabled", "scrollbar.track.border" } },
+    { "Quiet borders", "fg_gutter", {
+      "border", "border.variant", "border.disabled", "scrollbar.track.border",
+      -- Panel Guides as hairline borders, Zed's own fallback for the key
+      -- (border.variant). Upstream's tree markers are gray, but Zed draws a
+      -- Guide as a solid one-pixel line the full height of the row where
+      -- neo-tree draws a glyph with gaps, so gray reads louder here. The
+      -- active folder's Guide is no different, as Zed's bundled themes draw it.
+      "panel.indent_guide", "panel.indent_guide_active",
+    } },
     { "Transparent", { "bg", alpha = "00" }, { -- bg at 0%: the only transparent colour in the Palette
       "border.transparent", "ghost_element.background", "ghost_element.disabled", "element.disabled",
       "scrollbar.track.background", "scrollbar.thumb.border", "minimap.thumb.border",
@@ -119,16 +127,11 @@ return {
 
     -- Text
     { "Text", "fg", { "text", "icon", "editor.foreground", "editor.hover_line_number", "terminal.foreground" } }, -- Normal
-    { "Muted", "comment", { -- Comment
-      "text.muted", "icon.muted", "editor.code_lens.foreground",
-      -- a hovered Panel guide brightens one step: clicking it collapses the folder
-      "panel.indent_guide_hover",
-    } },
+    { "Muted", "comment", { "text.muted", "icon.muted", "editor.code_lens.foreground" } }, -- Comment
     { "Faint", "gray", { -- NonText
       "text.placeholder", "text.disabled", "icon.placeholder", "icon.disabled", "editor.invisible",
-      -- Panel guides as NeoTreeIndentMarker: one colour, the active folder's
-      -- guide no different, as Zed's bundled themes also draw it
-      "panel.indent_guide", "panel.indent_guide_active",
+      -- a hovered Panel Guide brightens one step: clicking it collapses the folder
+      "panel.indent_guide_hover",
     } },
 
     -- Editor furniture
