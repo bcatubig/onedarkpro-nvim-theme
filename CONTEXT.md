@@ -77,3 +77,7 @@ _Avoid_: pixel-faithful, exact match
 **Deviation**:
 A Syntax Key whose Zed colour differs from what nvim shows in some language, because a Filetype Override could not be expressed globally. Every Deviation is recorded with its reason.
 _Avoid_: bug, mismatch, known issue
+
+**Query Difference**:
+A token Zed and nvim colour differently because Zed's highlight query names a different capture for it than nvim-treesitter's does, or names none. Not a Deviation: no Filetype Override is involved. Each is recorded per language with the colour each editor shows.
+_Avoid_: grammar bug, Zed bug, mismatch

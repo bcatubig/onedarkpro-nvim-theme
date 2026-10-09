@@ -34,7 +34,8 @@
 -- language the user writes would ever show it; in that case the value from
 -- the emitting language with the most files in the user's code wins. Applied
 -- once, this makes `function.builtin` cyan (@function.builtin.go) and
--- `attribute` blue (@odp.decorator.python -> @function); every other conflict
+-- `attribute` blue (Zed names only the builtin decorators `attribute`, and
+-- nvim shows those blue through @attribute.builtin); every other conflict
 -- keeps the global value. Markdown-only Syntax Keys (`title`, `emphasis`,
 -- `emphasis.strong`, `text.literal`, `link_text`, `link_uri`,
 -- `punctuation.list_marker`, `punctuation.markup`, `punctuation.embedded`)
@@ -57,6 +58,14 @@
 --      cyan braces and orange brackets from @odp.braces.json and
 --      @odp.brackets.json.
 --   7. TOML keys: `property` is red; nvim shows purple from @property.toml.
+--   8. Python splat operators: `operator` is cyan; nvim shows the `*` and `**`
+--      of *args and **kwargs in fg from @odp.operator.splat.python.
+--   9. Python f-string braces: `punctuation.special` is fg; nvim shows the `{`
+--      and `}` of an interpolation purple from @odp.punctuation.special.python.
+-- Deviations 8 and 9 were found by the sign-off kit (docs/sign-off.md), which
+-- also lists the Query Differences: tokens Zed's queries capture under a
+-- different name from nvim-treesitter's, which the Mapping's values do not
+-- decide.
 return {
   -- Style Keys, by Chrome Rule. A comment names the nvim Highlight Group a
   -- rule echoes where there is one.
@@ -281,11 +290,11 @@ return {
     { "function.method", "blue" }, -- @function.method
     { "string.special", "blue" }, -- @string.special -> Special
     { "link_text", "blue" }, -- @text.reference.markdown_inline (Markdown Filetype Override)
-    { "attribute", "blue" }, -- @odp.decorator.python -> @function, by the Filetype Override rule over @attribute purple
+    { "attribute", "blue" }, -- @attribute.builtin: Zed names only @property, @classmethod and @staticmethod `attribute`, and nvim shows those blue (Special), so blue by the Filetype Override rule over @attribute purple; plain decorator names reach Zed as function.decorator, a Query Difference
 
     -- cyan
     { "function.builtin", "cyan" }, -- @function.builtin.go, by the Filetype Override rule over @function.builtin yellow (Deviation 4)
-    { "operator", "cyan" }, -- Operator, @operator
+    { "operator", "cyan" }, -- Operator, @operator (Deviation 8)
     { "string.escape", "cyan" }, -- @string.escape
     { "variant", "cyan" }, -- @lsp.type.enumMember
     { "selector.pseudo", "cyan" }, -- @odp.pseudo_class.scss
@@ -312,7 +321,7 @@ return {
     -- fg
     { "punctuation", "fg" }, -- Delimiter
     { "punctuation.delimiter", "fg" }, -- @punctuation.delimiter -> Delimiter
-    { "punctuation.special", "fg" }, -- @punctuation.special (`$` and `$(` in shell)
+    { "punctuation.special", "fg" }, -- @punctuation.special (`$` and `$(` in shell; Deviation 9)
     { "punctuation.embedded", "fg" }, -- @markup.raw.delimiter.markdown (Markdown Filetype Override): Zed emits this only for fenced-block fences and info strings; inline backticks are part of text.literal
     { "embedded", "fg" }, -- embedded code reads as plain text, as nvim shows it
     { "primary", "fg" }, -- Zed's catch-all for plain identifiers in some grammars
