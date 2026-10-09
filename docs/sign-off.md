@@ -88,7 +88,7 @@ Deviations: 1, 4, 5, 8, 9.
 
 Query Differences in this sample:
 
-- **Decorator names** `dataclass`, `retry`, and the `functools` in `@functools.wraps`: blue in Zed, where the whole decorator is `function.decorator`; in nvim the `@` is blue (Upstream's `@odp.decorator.python`), the name purple (the global `@attribute`), `functools` red. `property`, `classmethod` and `wraps` are blue in both. Zed sends only the three builtin decorators to `attribute`, which is why `attribute` is blue (README, Filetype Override rule).
+- **Decorator names** `dataclass`, `retry`, and the `functools` in `@functools.wraps`: blue in Zed, where the whole decorator is `function.decorator`; in nvim the `@` is blue (Upstream's `@odp.decorator.python`), the name purple (the global `@attribute`), `functools` red. `property`, `classmethod` and `wraps` are blue in both. Zed sends only the three builtin decorators to `attribute`, which is why `attribute` is blue (its entry in `scripts/mapping.lua`).
 - **Type constructors** `range(times)`, `str(path)`: yellow in Zed, which names them `type.builtin` in call position, blue in nvim (`@odp.function.builtin.python`). The same tokens would be cyan under Deviation 4 if Zed named them `function.builtin`.
 
 - **Keyword-argument names** `name=`, `times=`, `sep=`, `file=`, `encoding=`, `default_factory=`: blue in Zed (`function.kwargs`, which inherits `function`), red in nvim (`@variable.parameter`). Closable by giving `function.kwargs` its own Syntax Key, red; a follow-up decision.
