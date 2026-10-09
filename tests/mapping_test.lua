@@ -4,12 +4,12 @@
 -- Keys are checked in chrome_test.lua.
 local h = require("helpers")
 
--- The full Syntax Key Mapping of ticket #3, grouped by Palette colour:
+-- The full Syntax Key Mapping of ticket #3, with #14's two entries, grouped by Palette colour:
 -- { Palette colour, the Syntax Keys it fills }.
 local GROUPS = {
   { "red", {
     "variable", "variable.parameter", "variable.member", "property", "tag",
-    "string.special.symbol", "diff.minus", "title",
+    "string.special.symbol", "diff.minus", "title", "function.kwargs",
   } },
   { "yellow", {
     "variable.special", "type", "type.builtin", "constructor", "namespace", "enum",
@@ -19,13 +19,13 @@ local GROUPS = {
     "keyword", "label", "punctuation.bracket", "constant.builtin", "link_uri", "emphasis",
   } },
   { "blue", {
-    "function", "function.method", "string.special", "link_text", "attribute",
+    "function", "function.method", "string.special", "link_text", "attribute", "string.regex",
   } },
   { "cyan", {
     "function.builtin", "operator", "string.escape", "variant", "selector.pseudo",
   } },
   { "green", {
-    "string", "string.regex", "text.literal", "diff.plus",
+    "string", "text.literal", "diff.plus",
   } },
   { "orange", {
     "number", "boolean", "constant", "emphasis.strong", "selector",
