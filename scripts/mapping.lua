@@ -105,9 +105,8 @@ return {
       "editor.active_line_number", "border.focused", "border.selected", "panel.focused_border",
       "pane.focused_border", "drop_target.border", "debugger.accent",
     } },
-    { "Link accent", "blue", { -- Directory
+    { "Link accent", "blue", { -- Directory; editor.indent_guide_active as SnacksIndentScope
       "text.accent", "icon.accent", "link_text.hover", "editor.indent_guide_active",
-      "panel.indent_guide_active",
     } },
 
     -- Borders
@@ -120,16 +119,22 @@ return {
 
     -- Text
     { "Text", "fg", { "text", "icon", "editor.foreground", "editor.hover_line_number", "terminal.foreground" } }, -- Normal
-    { "Muted", "comment", { "text.muted", "icon.muted", "editor.code_lens.foreground" } }, -- Comment
+    { "Muted", "comment", { -- Comment
+      "text.muted", "icon.muted", "editor.code_lens.foreground",
+      -- a hovered Panel guide brightens one step: clicking it collapses the folder
+      "panel.indent_guide_hover",
+    } },
     { "Faint", "gray", { -- NonText
       "text.placeholder", "text.disabled", "icon.placeholder", "icon.disabled", "editor.invisible",
-      "panel.indent_guide",
+      -- Panel guides as NeoTreeIndentMarker: one colour, the active folder's
+      -- guide no different, as Zed's bundled themes also draw it
+      "panel.indent_guide", "panel.indent_guide_active",
     } },
 
     -- Editor furniture
     { "Gutter", "line_number", { "editor.line_number" } }, -- LineNr
     { "Guides", "indentline", { -- IndentLine (snacks indent)
-      "editor.indent_guide", "editor.wrap_guide", "editor.active_wrap_guide", "panel.indent_guide_hover",
+      "editor.indent_guide", "editor.wrap_guide", "editor.active_wrap_guide",
     } },
     { "Line flash", "fold", { "editor.highlighted_line.background" } }, -- Folded
     { "Debugger active line", "diff_change", { "editor.debugger_active_line.background" } }, -- DiffChange

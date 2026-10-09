@@ -245,25 +245,26 @@ Spec stories 14 to 41. Style Keys are in `scripts/mapping.lua` under the Chrome 
 | 20 | Selection | select text | `selection` (player one) |
 | 21 | Cursor | | purple |
 | 22 | Search | `cmd-f` for `queue` | matches `highlight` at 30%, active match at 55% (composites below) |
-| 23 | Indent guides | any indented sample | `indentline`; the guide of the indent level the cursor is in, blue |
-| 24 | Invisibles and placeholders | `show_whitespaces: all`; an empty search box | gray |
-| 25 | Editor, active tab | | `bg` |
-| 26 | Panels, status bar, title bar, tab bar, inactive tabs | project panel, terminal and git panels | `bg_statusline` |
-| 27 | Popups, menus, pickers | command palette, file finder, completions | `float_bg` |
-| 28 | Menu rows | hover and arrow through the command palette | hovered row `cursorline`, selected row `selection` |
-| 29 | Pane splits | `pane: split right` | `gray` |
-| 30 | Other borders | panel edges, popup borders | `fg_gutter` |
-| 31 | Focus and links | focused pane border; a link in a hover popup | purple; blue |
-| 32 | Terminal ANSI colours | the colour test below, in Zed's terminal and in ghostty | identical slot for slot |
-| 33 | Faint terminal text | the last line of the colour test | the normal colour at 70% alpha (Zed renders SGR 2 itself; the Theme's 60% `dim_*` keys are not reachable from escape sequences) |
-| 34 | Terminal surface | | background `bg`, foreground `fg` |
-| 35 | Diagnostics | delete a `)` in `sample.go` with gopls running | error red, warning yellow, info blue, hint cyan; popup tint at 15%, border at 50% |
-| 36 | Project panel git status | edit a sample; add a new file; a `.gitignore`d file | modified yellow, created green, deleted red, renamed and conflict blue, ignored gray |
-| 37 | Diff hunks | the gutter after an edit; `git: diff` | added `diff_add`, deleted `diff_delete`; hollow borders green and red |
-| 38 | Word-level diff | the project diff | `diff_text` added, `diff_text_delete` deleted |
-| 39 | Vim mode indicator | status bar in each mode | normal green, insert blue, visual yellow, replace red; text `bg` |
-| 40 | Accents | `indent_guides.coloring: indent_aware` | guides cycle red, yellow, blue, orange, green, purple, cyan |
-| 41 | Collaborator cursors | a collab session, or `themes/onedarkpro.json` `players` | player one purple; then blue, green, yellow, red, cyan, orange, gray |
+| 23 | Editor indent guides | any indented sample | `indentline`; the guide of the indent level the cursor is in, blue |
+| 24 | Panel indent guides | expand nested folders in the project panel; hover a guide | gray, the active folder's guide no different; hovered guide `comment` |
+| 25 | Invisibles and placeholders | `show_whitespaces: all`; an empty search box | gray |
+| 26 | Editor, active tab | | `bg` |
+| 27 | Panels, status bar, title bar, tab bar, inactive tabs | project panel, terminal and git panels | `bg_statusline` |
+| 28 | Popups, menus, pickers | command palette, file finder, completions | `float_bg` |
+| 29 | Menu rows | hover and arrow through the command palette | hovered row `cursorline`, selected row `selection` |
+| 30 | Pane splits | `pane: split right` | `gray` |
+| 31 | Other borders | panel edges, popup borders | `fg_gutter` |
+| 32 | Focus and links | focused pane border; a link in a hover popup | purple; blue |
+| 33 | Terminal ANSI colours | the colour test below, in Zed's terminal and in ghostty | identical slot for slot |
+| 34 | Faint terminal text | the last line of the colour test | the normal colour at 70% alpha (Zed renders SGR 2 itself; the Theme's 60% `dim_*` keys are not reachable from escape sequences) |
+| 35 | Terminal surface | | background `bg`, foreground `fg` |
+| 36 | Diagnostics | delete a `)` in `sample.go` with gopls running | error red, warning yellow, info blue, hint cyan; popup tint at 15%, border at 50% |
+| 37 | Project panel git status | edit a sample; add a new file; a `.gitignore`d file | modified yellow, created green, deleted red, renamed and conflict blue, ignored gray |
+| 38 | Diff hunks | the gutter after an edit; `git: diff` | added `diff_add`, deleted `diff_delete`; hollow borders green and red |
+| 39 | Word-level diff | the project diff | `diff_text` added, `diff_text_delete` deleted |
+| 40 | Vim mode indicator | status bar in each mode | normal green, insert blue, visual yellow, replace red; text `bg` |
+| 41 | Accents | `indent_guides.coloring: indent_aware` | guides cycle red, yellow, blue, orange, green, purple, cyan |
+| 42 | Collaborator cursors | a collab session, or `themes/onedarkpro.json` `players` | player one purple; then blue, green, yellow, red, cyan, orange, gray |
 
 Alpha composites over `bg` for an eyedropper:
 
