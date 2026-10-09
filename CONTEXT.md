@@ -64,6 +64,10 @@ _Avoid_: UI, non-editor colours
 A Zed dock surface: the project panel, outline, git, terminal, agent and debugger panels, and the other docked views. All Panels share one background Style Key, so a Panel surface is chosen once for all of them.
 _Avoid_: sidebar, files menu, explorer, file tree
 
+**Guide**:
+A one-pixel vertical line Zed draws at each indent level: in the editor, beside indented code, and in a Panel, joining a folder to its children. The two kinds have their own Style Keys and are coloured separately.
+_Avoid_: gutter, tree line, indent marker
+
 ### This project
 
 **Mapping**:
