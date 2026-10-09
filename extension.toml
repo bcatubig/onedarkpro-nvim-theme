@@ -1,6 +1,6 @@
 id = "onedarkpro-nvim-theme"
 name = "OneDarkPro nvim"
-version = "0.1.0"
+version = "0.1.1"
 schema_version = 1
 authors = ["Brandon Catubig <bcatubig@pm.me>"]
 description = "The olimorris/onedarkpro.nvim colours for Zed, generated from the plugin's own palette code."
