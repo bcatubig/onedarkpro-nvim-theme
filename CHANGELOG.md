@@ -6,7 +6,7 @@ All notable changes to this extension. The format follows [Keep a Changelog](htt
 
 ### Added
 
-- **OneDarkPro Onedark Dark**, **OneDarkPro Onedark Vivid** and **OneDarkPro Vaporwave** themes, all dark, built from the plugin's three remaining colourschemes by the same rules as the first two. On Onedark Dark's black background the plugin's own derived colours put popups and pickers flush with the editor, edged by a hairline border, and lift the status bar, tab bar and panels a shade above the editor instead of below it.
+- **OneDarkPro Onedark Dark**, **OneDarkPro Onedark Vivid** and **OneDarkPro Vaporwave** themes, all dark, built from the plugin's three remaining colourschemes by the same rules as the first two. On Onedark Dark's black background the plugin's own derived colours put popups and pickers flush with the editor, edged by a hairline border, and lift the status bar, tab bar and panels a shade above the editor instead of below it. ([#24](https://github.com/bcatubig/onedarkpro-nvim-theme/pull/24))
 
 ## [0.1.1] - 2026-10-09
 
